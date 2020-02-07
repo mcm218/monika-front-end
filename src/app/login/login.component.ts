@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Location } from "@angular/common";
+import { faDiscord } from "@fortawesome/free-brands-svg-icons";
 import { AuthService } from "../auth.service";
 
 @Component({
@@ -9,6 +9,7 @@ import { AuthService } from "../auth.service";
   styleUrls: ["./login.component.css"]
 })
 export class LoginComponent implements OnInit {
+  faDiscord = faDiscord;
   code: string;
   url: string;
   constructor(
@@ -20,7 +21,7 @@ export class LoginComponent implements OnInit {
     console.log(this.url);
     this.route.queryParams.subscribe(params => {
       this.code = params["code"];
-      console.log(this.code)
+      console.log(this.code);
       if (this.code) {
         this.authService.authorizeDiscord(this.url, this.code);
       }
