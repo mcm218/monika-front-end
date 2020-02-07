@@ -1,1 +1,26 @@
 /* You can add global styles to this file, and also import other style files */
+$accent: #7289da;
+$background: #2c2f33;
+$primary: #23272a;
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background-color: $background;
+}
+.mat-toolbar {
+  background-color: $accent;
+}
+.mat-card {
+  background-color: $primary;
+}
+mat-list-item {
+  min-height: 70px;
+}
+fa-icon {
+  color: white;
+}

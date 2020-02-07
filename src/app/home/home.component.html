@@ -1,0 +1,22 @@
+<mat-toolbar>
+  <mat-form-field>
+    <mat-select [(value)]="selected" (selectionChange)="selectGuild()">
+      <mat-option *ngFor="let guild of guilds" [value]="guild">
+        {{ guild.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-toolbar>
+<div class="home" fxLayout fxLayout.xs="column" fxLayoutAlign="space-between">
+  <div class="panel" fxLayout="column" fxFlex="30%">
+    <app-search></app-search>
+  </div>
+  <div fxLayout="column" fxFlex="5%"></div>
+  <div fxLayout="column" fxFlex="30%">
+    <app-music-player></app-music-player>
+  </div>
+  <div fxLayout="column" fxFlex="5%"></div>
+  <div class="panel" fxLayout="column" fxFlex="30%">
+    <app-songs></app-songs>
+  </div>
+</div>

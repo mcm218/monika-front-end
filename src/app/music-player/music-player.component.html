@@ -1,0 +1,97 @@
+<div class="container">
+  <mat-card>
+    <img *ngIf="song" [src]="thumbnail" mat-card-image />
+    <mat-card-content>
+      <h3 *ngIf="song">{{ song.title }}</h3>
+      <div class="volume-slider" fxLayout fxLayoutAlign="space-around center">
+        <fa-icon [icon]="faVolumeOff" size="2x" fxLayout="column"></fa-icon>
+        <mat-slider
+          fxLayout="column"
+          min="0"
+          max="30"
+          step="1"
+          aria-label="volume"
+          (change)="updateController()"
+          [(ngModel)]="volume"
+        ></mat-slider>
+        <fa-icon [icon]="faVolumeUp" size="2x" fxLayout="column"></fa-icon>
+      </div>
+      <div class="controls" fxLayout fxLayoutAlign="space-around center">
+        <button
+          *ngIf="!shuffleMode"
+          (click)="toggleShuffleMode()"
+          mat-icon-button
+          fxLayout="column"
+        >
+          <fa-icon [icon]="faRandom" size="2x" fxLayout="column"></fa-icon>
+        </button>
+        <button
+          *ngIf="shuffleMode"
+          (click)="toggleShuffleMode()"
+          mat-icon-button
+          fxLayout="column"
+        >
+          <fa-icon
+            [icon]="faRandom"
+            size="2x"
+            style="color: #7289da; "
+            fxLayout="column"
+          ></fa-icon>
+        </button>
+        <button
+          *ngIf="!pauseState"
+          (click)="togglePause()"
+          mat-icon-button
+          fxLayout="column"
+        >
+          <fa-icon [icon]="faPause" size="2x" fxLayout="column"></fa-icon>
+        </button>
+        <button
+          *ngIf="pauseState"
+          (click)="togglePause()"
+          mat-icon-button
+          fxLayout="column"
+        >
+          <fa-icon [icon]="faPlay" size="2x" fxLayout="column"></fa-icon>
+        </button>
+        <button (click)="skip()" mat-icon-button fxLayout="column">
+          <fa-icon [icon]="faForward" size="2x" fxLayout="column"></fa-icon>
+        </button>
+        <button
+          *ngIf="loop == 0"
+          (click)="toggleLoop()"
+          mat-icon-button
+          fxLayout="column"
+        >
+          <fa-icon [icon]="faLoop" size="2x" fxLayout="column"></fa-icon>
+        </button>
+        <button
+          *ngIf="loop == 1"
+          (click)="toggleLoop()"
+          mat-icon-button
+          fxLayout="column"
+        >
+          <fa-icon
+            [icon]="faLoop"
+            size="2x"
+            style="color: #7289da; "
+            fxLayout="column"
+          ></fa-icon>
+        </button>
+        <button
+          *ngIf="loop == 2"
+          (click)="toggleLoop()"
+          mat-icon-button
+          fxLayout="column"
+        >
+          <fa-icon
+            [icon]="faLoop"
+            size="2x"
+            style="color: #2c2f33; "
+            fxLayout="column"
+          ></fa-icon>
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

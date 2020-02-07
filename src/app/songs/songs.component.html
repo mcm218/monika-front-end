@@ -1,0 +1,14 @@
+<mat-card>
+  <mat-card-content>
+    <mat-list class="list" cdkDropList (cdkDropListDropped)="drop($event)">
+      <div *ngFor="let song of songs; let i = index">
+        <mat-list-item *ngIf="i > 0" class="song" cdkDrag>
+          <button (click)="remove(i)" mat-icon-button>
+            <fa-icon [icon]="faTimes"></fa-icon>
+          </button>
+          <p>{{ song.title }}</p>
+        </mat-list-item>
+      </div>
+    </mat-list>
+  </mat-card-content>
+</mat-card>

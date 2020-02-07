@@ -1,0 +1,43 @@
+<mat-card>
+  <mat-card-content>
+    <mat-form-field>
+      <input
+        [(ngModel)]="query"
+        matInput
+        placeholder="Search"
+        (keydown.enter)="search()"
+      />
+      <button
+        mat-button
+        *ngIf="query"
+        matSuffix
+        mat-icon-button
+        aria-label="Clear"
+        (click)="clear()"
+      >
+        <fa-icon [icon]="faTimes"></fa-icon>
+      </button>
+      <button
+        mat-button
+        *ngIf="query"
+        matSuffix
+        mat-icon-button
+        aria-label="Submit"
+        (click)="search()"
+      >
+        <fa-icon [icon]="faSearch"></fa-icon>
+      </button>
+    </mat-form-field>
+    <mat-list fxLayout="column" fxLayoutAlign="start center">
+      <mat-list-item
+        *ngFor="let result of results; let i = index"
+        (click)="addToQueue(i)"
+      >
+        <button fxFlex="10%" mat-icon-button>
+          <fa-icon [icon]="faPlus"></fa-icon>
+        </button>
+        <div fxFlex="90%">{{ result.snippet.title }}</div>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>

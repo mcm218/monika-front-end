@@ -1,0 +1,16 @@
+.container {
+  margin: 16px 0;
+}
+mat-card{
+    border-radius: 20px;
+}
+mat-card-content {
+  text-align: center;
+}
+mat-slider {
+  width: 70%;
+}
+
+.controls {
+  padding: 30px 0px;
+}
