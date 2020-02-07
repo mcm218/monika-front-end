@@ -2,11 +2,10 @@
 <div class="container">
   <mat-card fxLayout="column" fxLayoutAlign="center center">
     <fa-icon [icon]="faDiscord" size="5x"></fa-icon>
-    <button
-      mat-button
-      href="https://discordapp.com/api/oauth2/authorize?client_id=673564334579908618&redirect_uri=http%3A%2F%2Flocalhost%3A4200%2Flogin&response_type=code&scope=identify%20guilds"
-    >
-      Login with Discord
-    </button>
+    <a [href]="discordUrl" style="color: white;">
+      <button mat-button>
+        Login with Discord
+      </button>
+    </a>
   </mat-card>
 </div>
