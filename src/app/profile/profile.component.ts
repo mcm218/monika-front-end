@@ -6,7 +6,8 @@ import {
   faHome,
   faTimes,
   faSearch,
-  faSave
+  faSave,
+  faPen
 } from "@fortawesome/free-solid-svg-icons";
 import { MatSnackBar } from "@angular/material";
 import { CdkDragDrop, moveItemInArray } from "@angular/cdk/drag-drop";
@@ -22,11 +23,15 @@ export class ProfileComponent implements OnInit {
   faSearch = faSearch;
   faHome = faHome;
   faPlus = faPlus;
+  faPen = faPen;
+
   user: any;
   history: any[];
   mostAdded: any[];
   lists: any[];
   queue: any[];
+
+  listId: string;
   query: string;
   results: any[];
   listTitle: string;
@@ -47,7 +52,6 @@ export class ProfileComponent implements OnInit {
     this.newList = [];
     this.auth.user.subscribe(user => {
       this.user = user;
-      console.log(user);
       this.getSongs();
       this.getQueue();
       this.getLists();
@@ -57,7 +61,6 @@ export class ProfileComponent implements OnInit {
   getGuilds() {
     this.guilds = this.auth.guilds;
     this.selected = this.db.guild ? this.db.guild : this.guilds[0];
-    console.log(this.selected);
     this.db.selectGuild(this.selected);
   }
 
@@ -79,6 +82,7 @@ export class ProfileComponent implements OnInit {
       this.history = [];
       this.mostAdded = [];
       snapshots.forEach(snapshot => {
+        console.log(snapshot.payload.doc.data());
         this.history.push(snapshot.payload.doc.data());
         this.mostAdded.push(Object.assign({}, snapshot.payload.doc.data()));
       });
@@ -95,7 +99,10 @@ export class ProfileComponent implements OnInit {
     this.db.getLists(this.user.id).subscribe(snapshots => {
       this.lists = [];
       for (let snapshot of snapshots) {
-        this.lists.push(snapshot.payload.doc.data());
+        this.lists.push({
+          id: snapshot.payload.doc.id,
+          ...(snapshot.payload.doc.data() as Object)
+        });
       }
     });
   }
@@ -211,9 +218,19 @@ export class ProfileComponent implements OnInit {
       // Ask for title in toast
       return;
     }
-    this.db.saveList(this.user.id, this.listTitle, this.newList);
+    if (this.listId) {
+      this.db.saveList(this.user.id, this.listTitle, this.newList, this.listId);
+    } else {
+      this.db.saveList(this.user.id, this.listTitle, this.newList);
+    }
     this.listTitle = "";
     this.newList = [];
+  }
+
+  editList(list) {
+    this.listId = list.id;
+    this.listTitle = list.title;
+    this.newList = new Array(...list.songs);
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -225,6 +242,9 @@ export class ProfileComponent implements OnInit {
     this.newList.splice(i, 1);
   }
 
+  clearList() {
+    this.newList = [];
+  }
   clear() {
     this.query = "";
     this.results = [];

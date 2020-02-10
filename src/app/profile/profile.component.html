@@ -57,6 +57,9 @@
             <fa-icon [icon]="faPlus"></fa-icon>
           </button>
           <h3>{{ list.title | titlecase }}</h3>
+          <button fxFlex="10%" mat-icon-button (click)="editList(list)">
+            <fa-icon [icon]="faPen"></fa-icon>
+          </button>
         </mat-expansion-panel-header>
         <div *ngFor="let song of list.songs" (click)="addSongFromList(song)">
           <button fxFlex="10%" mat-icon-button>
@@ -112,6 +115,15 @@
         </mat-list>
         <mat-form-field class="wide" *ngIf="newList && newList.length > 0">
           <input [(ngModel)]="listTitle" matInput placeholder="Title" />
+          <button
+            mat-button
+            matSuffix
+            mat-icon-button
+            aria-label="Clear"
+            (click)="clearList()"
+          >
+            <fa-icon [icon]="faTimes"></fa-icon>
+          </button>
           <button
             matSuffix
             mat-icon-button
