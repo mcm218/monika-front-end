@@ -9,6 +9,10 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
+  <img
+    height="50px"
+    src="https://cdn.discordapp.com/icons/{{ selected.id }}/{{ selected.icon }}"
+  />
   <p class="navUsername">{{ user.username }}</p>
   <img
     height="50px"
@@ -54,7 +58,7 @@
           </button>
           <h3>{{ list.title | titlecase }}</h3>
         </mat-expansion-panel-header>
-        <div *ngFor="let song of list.songs" (click)="addSong(song)">
+        <div *ngFor="let song of list.songs" (click)="addSongFromList(song)">
           <button fxFlex="10%" mat-icon-button>
             <fa-icon [icon]="faPlus"></fa-icon>
           </button>

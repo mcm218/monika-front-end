@@ -58,19 +58,20 @@ export class DbService {
   }
 
   pushSong(id: string, song: any) {
+    console.log(id);
     var now = new Date();
     var ref = this.db.collection("users/" + id + "/history").doc(song.id);
     ref.get().subscribe(snapshot => {
       if (!snapshot.data()) {
         ref.set({ song: song, dateAdded: now, timesAdded: 1 });
       } else {
-        var num = snapshot.data().timesAdded;
-        ref.set({ dateAdded: now, timesAdded: num + 1 }, { merge: true });
+        var num = snapshot.data().timesAdded + 1;
+        ref.set({ dateAdded: now, timesAdded: num }, { merge: true });
       }
     });
   }
   getUserSongs(id: string): Observable<any> {
-    return this.db.collection("users/" + id + "/history").valueChanges();
+    return this.db.collection("users/" + id + "/history").snapshotChanges();
   }
 
   saveList(uid: string, title: string, songs: any[], id?: string) {

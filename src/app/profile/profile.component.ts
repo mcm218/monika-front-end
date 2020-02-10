@@ -47,6 +47,7 @@ export class ProfileComponent implements OnInit {
     this.newList = [];
     this.auth.user.subscribe(user => {
       this.user = user;
+      console.log(user);
       this.getSongs();
       this.getQueue();
       this.getLists();
@@ -56,6 +57,7 @@ export class ProfileComponent implements OnInit {
   getGuilds() {
     this.guilds = this.auth.guilds;
     this.selected = this.db.guild ? this.db.guild : this.guilds[0];
+    console.log(this.selected);
     this.db.selectGuild(this.selected);
   }
 
@@ -73,11 +75,17 @@ export class ProfileComponent implements OnInit {
     });
   }
   getSongs() {
-    this.db.getUserSongs(this.user.id).subscribe(songs => {
-      this.history = songs.sort((a, b) => {
-        return (b.dateAdded as Date) > (a.dateAdded as Date) ? 1 : -1;
+    this.db.getUserSongs(this.user.id).subscribe(snapshots => {
+      this.history = [];
+      this.mostAdded = [];
+      snapshots.forEach(snapshot => {
+        this.history.push(snapshot.payload.doc.data());
+        this.mostAdded.push(Object.assign({}, snapshot.payload.doc.data()));
       });
-      this.mostAdded = songs.sort((a, b) => {
+      this.history = this.history.sort((a, b) => {
+        return b.dateAdded.seconds - a.dateAdded.seconds;
+      });
+      this.mostAdded = this.mostAdded.sort((a, b) => {
         return b.timesAdded - a.timesAdded;
       });
     });
@@ -102,9 +110,17 @@ export class ProfileComponent implements OnInit {
       duration: 4000
     });
   }
+  addSongFromList(song) {
+    this.queue.push(song);
+    this.db.pushSong(this.user.id, song);
+    this.db.updateQueue(this.queue);
+    this.snackBar.open(song.title + " added to queue", "", {
+      duration: 4000
+    });
+  }
   addSong(song) {
     this.queue.push(song.song);
-    this.db.pushSong(this.user.uid, song);
+    this.db.pushSong(this.user.id, song);
     this.db.updateQueue(this.queue);
     this.snackBar.open(song.song.title + " added to queue", "", {
       duration: 4000
