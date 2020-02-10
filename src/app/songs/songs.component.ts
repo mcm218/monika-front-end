@@ -14,7 +14,11 @@ export class SongsComponent implements OnInit {
 
   drop(event: CdkDragDrop<string[]>) {
     console.log(event.previousIndex + " -> " + event.currentIndex);
-    moveItemInArray(this.songs, event.previousIndex, event.currentIndex);
+    moveItemInArray(
+      this.songs,
+      event.previousIndex + 1,
+      event.currentIndex + 1
+    );
     this.db.updateQueue(this.songs);
   }
 

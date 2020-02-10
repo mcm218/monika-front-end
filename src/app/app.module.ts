@@ -15,7 +15,8 @@ import {
   MatFormFieldModule,
   MatInputModule,
   MatSelectModule,
-  MatSnackBarModule
+  MatSnackBarModule,
+  MatExpansionModule
 } from "@angular/material";
 import { DragDropModule } from "@angular/cdk/drag-drop";
 import { AngularFireModule } from "@angular/fire";
@@ -28,6 +29,7 @@ import { HomeComponent } from "./home/home.component";
 import { SearchComponent } from "./search/search.component";
 import { environment } from "src/environments/environment";
 import { LoginComponent } from "./login/login.component";
+import { ProfileComponent } from "./profile/profile.component";
 
 @NgModule({
   declarations: [
@@ -36,7 +38,8 @@ import { LoginComponent } from "./login/login.component";
     SongsComponent,
     HomeComponent,
     SearchComponent,
-    LoginComponent
+    LoginComponent,
+    ProfileComponent
   ],
   imports: [
     BrowserModule,
@@ -53,6 +56,7 @@ import { LoginComponent } from "./login/login.component";
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatExpansionModule,
     MatSnackBarModule,
     DragDropModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),

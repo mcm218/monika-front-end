@@ -15,7 +15,7 @@ body {
 .mat-toolbar {
   background-color: $accent;
 }
-.mat-card {
+.mat-card, .mat-expansion-panel {
   background-color: $primary;
 }
 mat-list-item {

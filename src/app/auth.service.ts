@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "src/environments/environment";
-import { catchError } from "rxjs/operators";
 import { CookieService } from "ngx-cookie-service";
 import { Router } from "@angular/router";
-import { ThrowStmt } from "@angular/compiler";
+import { BehaviorSubject } from "rxjs";
+import { DbService } from "./db.service";
 
 interface User {
   id: any;
@@ -23,13 +23,15 @@ export class AuthService {
   guildVerified = false;
   voiceVerified = false;
   guilds = [];
+  user: BehaviorSubject<any> = new BehaviorSubject<any>("");
   userId: string;
   accessToken: string;
 
   constructor(
     private http: HttpClient,
     private cookieService: CookieService,
-    private router: Router
+    private router: Router,
+    private db: DbService
   ) {}
 
   authorizeDiscord(url: string, code: string) {
@@ -78,8 +80,7 @@ export class AuthService {
     body.set("redirect_uri", url);
     body.set("scope", environment.discordData.scope);
     var headers = new HttpHeaders({
-      "Content-Type": "application/x-www-form-urlencoded",
-      "User-Agent": "MonikaBot (http://some.url, v0.1)"
+      "Content-Type": "application/x-www-form-urlencoded"
     });
     this.http
       .post(this.tokenUrl, body.toString(), { headers: headers })
@@ -113,6 +114,8 @@ export class AuthService {
       .subscribe(
         response => {
           let user = response as User;
+          this.db.createUser(user);
+          this.user.next(user);
           this.userId = user.id;
           this.router.navigate([""]);
         },

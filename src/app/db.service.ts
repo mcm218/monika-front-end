@@ -2,9 +2,7 @@ import { Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/firestore";
 import { Observable, BehaviorSubject } from "rxjs";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { catchError, tap } from "rxjs/operators";
 import { environment } from "src/environments/environment";
-import { AuthService } from "./auth.service";
 
 @Injectable({
   providedIn: "root"
@@ -50,6 +48,52 @@ export class DbService {
       "i"
     ); // fragment locator
     return !!pattern.test(str);
+  }
+
+  createUser(user: any) {
+    this.db
+      .collection("users")
+      .doc(user.id)
+      .set(user);
+  }
+
+  pushSong(id: string, song: any) {
+    var now = new Date();
+    var ref = this.db.collection("users/" + id + "/history").doc(song.id);
+    ref.get().subscribe(snapshot => {
+      if (!snapshot.data()) {
+        ref.set({ song: song, dateAdded: now, timesAdded: 1 });
+      } else {
+        var num = snapshot.data().timesAdded;
+        ref.set({ dateAdded: now, timesAdded: num + 1 }, { merge: true });
+      }
+    });
+  }
+  getUserSongs(id: string): Observable<any> {
+    return this.db.collection("users/" + id + "/history").valueChanges();
+  }
+
+  saveList(uid: string, title: string, songs: any[], id?: string) {
+    if (id) {
+      return this.db
+        .collection("users/" + uid + "/lists")
+        .doc(id)
+        .set({
+          title: title,
+          songs: songs
+        });
+    }
+    var id = this.db.createId();
+    return this.db
+      .collection("users/" + uid + "/lists")
+      .doc(id)
+      .set({
+        title: title,
+        songs: songs
+      });
+  }
+  getLists(uid: string) {
+    return this.db.collection("users/" + uid + "/lists").snapshotChanges();
   }
 
   selectGuild(guild) {

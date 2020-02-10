@@ -1,4 +1,7 @@
 <mat-toolbar>
+  <button mat-button routerLink="/user">
+    <fa-icon [icon]="faUser" size="2x"></fa-icon>
+  </button>
   <mat-form-field>
     <mat-select [(value)]="selected" (selectionChange)="selectGuild()">
       <mat-option *ngFor="let guild of guilds" [value]="guild">
@@ -6,6 +9,11 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
+  <p class="navUsername">{{ user.username }}</p>
+  <img
+    height="50px"
+    src="https://cdn.discordapp.com/avatars/{{ user.id }}/{{ user.avatar }}"
+  />
 </mat-toolbar>
 <div class="home" fxLayout fxLayout.xs="column" fxLayoutAlign="space-between">
   <div class="panel" fxLayout="column" fxFlex="30%">

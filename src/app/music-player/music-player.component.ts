@@ -30,7 +30,7 @@ export class MusicPlayerComponent implements OnInit {
   loop = 0;
   song: any;
   pauseState = false;
-  queue: any;
+  queue: any[];
   key = 0;
   thumbnail: string = "";
   constructor(private db: DbService) {}
@@ -70,9 +70,17 @@ export class MusicPlayerComponent implements OnInit {
       this.pauseState = controller.pauseState;
     });
   }
-  toggleShuffleMode() {
-    this.shuffleMode = !this.shuffleMode;
-    this.updateController();
+  shuffle() {
+    // shuffle all but first song
+    const song = this.queue.splice(0, 1);
+    for (let i = this.queue.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * i);
+      const temp = this.queue[i];
+      this.queue[i] = this.queue[j];
+      this.queue[j] = temp;
+    }
+    this.queue.unshift(song[0]);
+    this.db.updateQueue(this.queue);
   }
   toggleLoop() {
     this.loop++;

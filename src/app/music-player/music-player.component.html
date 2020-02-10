@@ -19,24 +19,11 @@
       <div class="controls" fxLayout fxLayoutAlign="space-around center">
         <button
           *ngIf="!shuffleMode"
-          (click)="toggleShuffleMode()"
+          (click)="shuffle()"
           mat-icon-button
           fxLayout="column"
         >
           <fa-icon [icon]="faRandom" size="2x" fxLayout="column"></fa-icon>
-        </button>
-        <button
-          *ngIf="shuffleMode"
-          (click)="toggleShuffleMode()"
-          mat-icon-button
-          fxLayout="column"
-        >
-          <fa-icon
-            [icon]="faRandom"
-            size="2x"
-            style="color: #7289da; "
-            fxLayout="column"
-          ></fa-icon>
         </button>
         <button
           *ngIf="!pauseState"

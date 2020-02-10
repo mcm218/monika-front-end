@@ -2,6 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { faPlus, faTimes, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { DbService } from "../db.service";
 import { MatSnackBar } from "@angular/material";
+import { AuthService } from "../auth.service";
 
 @Component({
   selector: "app-search",
@@ -13,12 +14,17 @@ export class SearchComponent implements OnInit {
   faTimes = faTimes;
   faSearch = faSearch;
   playlist = false;
+  uid: string;
   queue: any[];
   controller: any;
   results: any[];
   query: string;
 
-  constructor(private db: DbService, private snackBar: MatSnackBar) {}
+  constructor(
+    private db: DbService,
+    private auth: AuthService,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnInit() {
     this.results = [];
@@ -30,16 +36,19 @@ export class SearchComponent implements OnInit {
     this.db.guildObvservable.subscribe(_ => {
       this.getQueue();
       this.getController();
+      this.uid = this.auth.userId;
     });
   }
 
   search() {
     this.results = [];
     this.query = this.query.toLowerCase();
-    var segments = this.query.split(" ");
-    if (segments[0] === "playlist") {
+    var isPlaylist = this.query.search(/playlist/i);
+    if (isPlaylist != -1) {
       this.playlist = true;
-      var q = this.query.split("playlist ")[1];
+      var q = this.query.replace("playlist ", "");
+      q = q.replace(" playlist", "");
+      q = q.replace("playlist", "");
       this.db.playlistSearch(q).subscribe(snapshots => {
         this.results = [];
         snapshots.forEach(snapshot => {
@@ -92,6 +101,7 @@ export class SearchComponent implements OnInit {
               title: title,
               thumbnail: thumbnail
             };
+            this.db.pushSong(this.uid, song);
             if (this.controller.shuffleMode) {
               //find rand position
               var pos = Math.floor(Math.random() * (this.queue.length - 1)) + 1;
@@ -115,6 +125,12 @@ export class SearchComponent implements OnInit {
       var url = "https://www.youtube.com/watch?v=" + id;
       var title = song.snippet.title;
       var thumbnail = song.snippet.thumbnails.high.url;
+      this.db.pushSong(this.uid, {
+        id: id,
+        thumbnail: thumbnail,
+        title: title,
+        url: url
+      });
       if (this.controller.shuffleMode) {
         //find rand position
         var pos = Math.floor(Math.random() * (this.queue.length - 1)) + 1;

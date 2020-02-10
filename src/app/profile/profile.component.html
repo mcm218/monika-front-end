@@ -1,0 +1,134 @@
+<mat-toolbar>
+  <button mat-button routerLink="">
+    <fa-icon [icon]="faHome" size="2x"></fa-icon>
+  </button>
+  <mat-form-field>
+    <mat-select [(value)]="selected" (selectionChange)="selectGuild()">
+      <mat-option *ngFor="let guild of guilds" [value]="guild">
+        {{ guild.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <p class="navUsername">{{ user.username }}</p>
+  <img
+    height="50px"
+    src="https://cdn.discordapp.com/avatars/{{ user.id }}/{{ user.avatar }}"
+  />
+</mat-toolbar>
+<div class="home" fxLayout fxLayout.xs="column" fxLayoutAlign="space-between">
+  <div class="panel" fxLayout="column" fxFlex="30%">
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <h3>Most Added</h3>
+        </mat-expansion-panel-header>
+        <div *ngFor="let song of mostAdded" (click)="addSong(song)">
+          <button fxFlex="10%" mat-icon-button>
+            <fa-icon [icon]="faPlus"></fa-icon>
+          </button>
+          <p>{{ song.song.title }}</p>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+    <mat-accordion>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <h3>History</h3>
+        </mat-expansion-panel-header>
+        <div *ngFor="let song of history" (click)="addSong(song)">
+          <button fxFlex="10%" mat-icon-button>
+            <fa-icon [icon]="faPlus"></fa-icon>
+          </button>
+          <p>{{ song.song.title }}</p>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+  <div fxLayout="column" fxFlex="5%"></div>
+  <div fxLayout="column" class="panel" fxFlex="30%">
+    <mat-accordion *ngFor="let list of lists">
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <button fxFlex="10%" mat-icon-button (click)="addListToQueue(list)">
+            <fa-icon [icon]="faPlus"></fa-icon>
+          </button>
+          <h3>{{ list.title | titlecase }}</h3>
+        </mat-expansion-panel-header>
+        <div *ngFor="let song of list.songs" (click)="addSong(song)">
+          <button fxFlex="10%" mat-icon-button>
+            <fa-icon [icon]="faPlus"></fa-icon>
+          </button>
+          <p>{{ song.title }}</p>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
+  <div fxLayout="column" fxFlex="5%"></div>
+  <div class="panel" fxLayout="column" fxFlex="30%">
+    <mat-card>
+      <mat-card-content>
+        <mat-form-field class="wide">
+          <input
+            [(ngModel)]="query"
+            matInput
+            placeholder="Search"
+            (keydown.enter)="search()"
+          />
+          <button
+            mat-button
+            *ngIf="query"
+            matSuffix
+            mat-icon-button
+            aria-label="Clear"
+            (click)="clear()"
+          >
+            <fa-icon [icon]="faTimes"></fa-icon>
+          </button>
+          <button
+            mat-button
+            *ngIf="query"
+            matSuffix
+            mat-icon-button
+            aria-label="Submit"
+            (click)="search()"
+          >
+            <fa-icon [icon]="faSearch"></fa-icon>
+          </button>
+        </mat-form-field>
+        <mat-list fxLayout="column" fxLayoutAlign="start center">
+          <mat-list-item
+            *ngFor="let result of results; let i = index"
+            (click)="addToList(i)"
+          >
+            <button fxFlex="10%" mat-icon-button>
+              <fa-icon [icon]="faPlus"></fa-icon>
+            </button>
+            <div fxFlex="90%">{{ result.snippet.title }}</div>
+          </mat-list-item>
+        </mat-list>
+        <mat-form-field class="wide" *ngIf="newList && newList.length > 0">
+          <input [(ngModel)]="listTitle" matInput placeholder="Title" />
+          <button
+            matSuffix
+            mat-icon-button
+            aria-label="Submit"
+            (keydown.enter)="saveList()"
+            (click)="saveList()"
+          >
+            <fa-icon [icon]="faSave"></fa-icon>
+          </button>
+        </mat-form-field>
+        <mat-list cdkDropList (cdkDropListDropped)="drop($event)">
+          <div *ngFor="let song of newList; let i = index">
+            <mat-list-item cdkDrag>
+              <button (click)="remove(i)" mat-icon-button>
+                <fa-icon [icon]="faTimes"></fa-icon>
+              </button>
+              <p class="list">{{ song.title }}</p>
+            </mat-list-item>
+          </div>
+        </mat-list>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
