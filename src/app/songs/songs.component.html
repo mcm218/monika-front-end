@@ -1,14 +1,28 @@
 <mat-card>
   <mat-card-content>
-    <mat-list class="list" cdkDropList (cdkDropListDropped)="drop($event)">
+    <div class="list" cdkDropList (cdkDropListDropped)="drop($event)">
       <div *ngFor="let song of songs; let i = index">
-        <mat-list-item *ngIf="i > 0" class="song" cdkDrag>
-          <button (click)="remove(i)" mat-icon-button>
+        <div
+          fxLayout
+          fxLayoutAlign="start center"
+          *ngIf="i > 0"
+          class="song"
+          cdkDrag
+        >
+          <button fxFlex="10%" (click)="remove(i)" mat-icon-button>
             <fa-icon [icon]="faTimes"></fa-icon>
           </button>
-          <p>{{ song.title }}</p>
-        </mat-list-item>
+          <p fxFlex="80%">{{ song.title }}</p>
+          <img
+            height="50px"
+            class="profile"
+            *ngIf="song.user"
+            src="https://cdn.discordapp.com/avatars/{{ song.user.id }}/{{
+              song.user.avatar
+            }}"
+          />
+        </div>
       </div>
-    </mat-list>
+    </div>
   </mat-card-content>
 </mat-card>

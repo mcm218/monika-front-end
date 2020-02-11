@@ -1,8 +1,9 @@
 import { Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/firestore";
-import { Observable, BehaviorSubject } from "rxjs";
+import { Observable, BehaviorSubject, of } from "rxjs";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { environment } from "src/environments/environment";
+import { AuthService } from "./auth.service";
 
 @Injectable({
   providedIn: "root"
@@ -30,12 +31,19 @@ export class DbService {
     environment.youtubeKey +
     "&playlistId=";
 
+  myPlaylistPath =
+    "https://www.googleapis.com/youtube/v3/playlists?part=snippet%2CcontentDetails&maxResults=25&mine=true&key=" +
+    environment.youtubeKey;
   videoPath = [this.youtubeVideoPath, this.backupVideoPath];
   searchPath = [this.youtubeSearchPath, this.backupSearchPath];
   guildObvservable: BehaviorSubject<any> = new BehaviorSubject<any>("");
   guild: any;
 
-  constructor(private db: AngularFirestore, private http: HttpClient) {}
+  constructor(
+    private db: AngularFirestore,
+    private auth: AuthService,
+    private http: HttpClient
+  ) {}
 
   validURL(str: string): boolean {
     var pattern = new RegExp(
@@ -95,6 +103,31 @@ export class DbService {
   }
   getLists(uid: string) {
     return this.db.collection("users/" + uid + "/lists").snapshotChanges();
+  }
+  getYoutubeLists(): Observable<any> {
+    var user = this.auth.getCurrentUser;
+    if (user) {
+      return of(null);
+    }
+    return this.http.get(this.myPlaylistPath).pipe();
+  }
+
+  getSpotifyLists(): Observable<any> {
+    var headers = new HttpHeaders({
+      Authorization: `Bearer ${this.auth.spotifyAccessToken}`
+    });
+    return this.http.get("https://api.spotify.com/v1/me/playlists?limit=50", {
+      headers: headers
+    });
+  }
+
+  getSpotifyTracks(url: string): Observable<any> {
+    var headers = new HttpHeaders({
+      Authorization: `Bearer ${this.auth.spotifyAccessToken}`
+    });
+    return this.http.get(url, {
+      headers: headers
+    });
   }
 
   selectGuild(guild) {
@@ -167,18 +200,33 @@ export class DbService {
     }
   }
 
+  myYoutubePlaylists() {
+    //: Observable<any> {
+    var headers = new HttpHeaders({
+      Authorization: `Bearer ${this.auth.googleAccessToken}`
+    });
+    return this.http.get(this.myPlaylistPath, { headers: headers }).pipe();
+  }
+
   youtubePlaylistSearch(q: string, key: number): Observable<any> {
     return this.http.get(this.searchPath[key] + q + "&type=playlist").pipe();
   }
 
   youtubePlaylistItems(id: string) {
-    return this.http.get(this.playlistPath + id).pipe();
+    var headers;
+    if (this.auth.googleAccessToken) {
+      headers = new HttpHeaders({
+        Authorization: `Bearer ${this.auth.googleAccessToken}`
+      });
+    }
+
+    return this.http.get(this.playlistPath + id, { headers: headers }).pipe();
   }
 
   search(q: string): Observable<any> {
     q = q.split(" ").join("+");
     console.log(q);
-    return this.db.collection("searches/videos/" + q).snapshotChanges();
+    return this.db.collection("searches/videos/" + q).get();
   }
 
   youtubeSearch(q: string, key: number): Observable<any> {

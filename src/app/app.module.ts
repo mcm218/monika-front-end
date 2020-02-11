@@ -20,6 +20,7 @@ import {
 } from "@angular/material";
 import { DragDropModule } from "@angular/cdk/drag-drop";
 import { AngularFireModule } from "@angular/fire";
+import { AngularFireAuthModule } from "@angular/fire/auth";
 import { AngularFirestoreModule } from "@angular/fire/firestore";
 import { HttpClientModule } from "@angular/common/http";
 import { CookieService } from "ngx-cookie-service";
@@ -61,6 +62,7 @@ import { ProfileComponent } from "./profile/profile.component";
     DragDropModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,
+    AngularFireAuthModule,
     HttpClientModule
   ],
   providers: [CookieService],

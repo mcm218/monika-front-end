@@ -23,3 +23,11 @@ p {
 .song.cdk-drop-list-dragging .song:not(.cdk-drag-placeholder) {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
+
+.profile {
+  border-radius: 50px;
+  margin: 0 10px;
+}
+.song{
+  min-height: 55px;
+}

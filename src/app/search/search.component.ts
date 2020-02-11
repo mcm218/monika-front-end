@@ -3,6 +3,8 @@ import { faPlus, faTimes, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { DbService } from "../db.service";
 import { MatSnackBar } from "@angular/material";
 import { AuthService } from "../auth.service";
+import { environment } from "src/environments/environment";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "app-search",
@@ -70,8 +72,8 @@ export class SearchComponent implements OnInit {
       this.playlist = false;
       this.db.search(this.query).subscribe(snapshots => {
         this.results = [];
-        snapshots.forEach(snapshot => {
-          this.results.push(snapshot.payload.doc.data());
+        snapshots.docs.forEach(snapshot => {
+          this.results.push(snapshot.data());
         });
         if (snapshots.length == 0) {
           this.db.youtubeSearch(this.query, 0).subscribe(
@@ -94,8 +96,18 @@ export class SearchComponent implements OnInit {
             var id = item.snippet.resourceId.videoId;
             var url = "https://www.youtube.com/watch?v=" + id;
             var title = item.snippet.title;
-            var thumbnail = item.snippet.thumbnails.high.url;
+            var thumbnail;
+            if (item.snippet.thumbnails) {
+              if (item.snippet.thumbnails.maxres) {
+                thumbnail = item.snippet.thumbnails.maxres.url;
+              } else if (item.snippet.thumbnails.standard) {
+                thumbnail = item.snippet.thumbnails.standard.url;
+              } else {
+                thumbnail = item.snippet.thumbnails.high.url;
+              }
+            }
             var song = {
+              user: this.auth.user.value,
               id: id,
               url: url,
               title: title,
@@ -124,7 +136,16 @@ export class SearchComponent implements OnInit {
       var id = song.id.videoId;
       var url = "https://www.youtube.com/watch?v=" + id;
       var title = song.snippet.title;
-      var thumbnail = song.snippet.thumbnails.high.url;
+      var thumbnail;
+      if (song.snippet.thumbnails) {
+        if (song.snippet.thumbnails.maxres) {
+          thumbnail = song.snippet.thumbnails.maxres.url;
+        } else if (song.snippet.thumbnails.standard) {
+          thumbnail = song.snippet.thumbnails.standard.url;
+        } else {
+          thumbnail = song.snippet.thumbnails.high.url;
+        }
+      }
       this.db.pushSong(this.uid, {
         id: id,
         thumbnail: thumbnail,
@@ -135,6 +156,7 @@ export class SearchComponent implements OnInit {
         //find rand position
         var pos = Math.floor(Math.random() * (this.queue.length - 1)) + 1;
         this.queue.splice(pos, 0, {
+          user: this.auth.user.value,
           id: id,
           thumbnail: thumbnail,
           title: title,
@@ -142,6 +164,7 @@ export class SearchComponent implements OnInit {
         });
       } else {
         this.queue.push({
+          user: this.auth.user.value,
           id: id,
           thumbnail: thumbnail,
           title: title,

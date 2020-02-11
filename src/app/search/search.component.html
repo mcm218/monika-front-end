@@ -28,16 +28,16 @@
         <fa-icon [icon]="faSearch"></fa-icon>
       </button>
     </mat-form-field>
-    <mat-list fxLayout="column" fxLayoutAlign="start center">
-      <mat-list-item
+    <div fxLayout="column" fxLayoutAlign="start center">
+      <div
+        class="searchResult"
         *ngFor="let result of results; let i = index"
         (click)="addToQueue(i)"
       >
-        <button fxFlex="10%" mat-icon-button>
-          <fa-icon [icon]="faPlus"></fa-icon>
-        </button>
-        <div fxFlex="90%">{{ result.snippet.title }}</div>
-      </mat-list-item>
-    </mat-list>
+        <img fxFlex="30%" src="{{ result.snippet.thumbnails.high.url }}" />
+        <div fxFlex="5%"></div>
+        <p fxFlex="65%">{{ result.snippet.title }}</p>
+      </div>
+    </div>
   </mat-card-content>
 </mat-card>

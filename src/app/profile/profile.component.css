@@ -1,17 +1,14 @@
-img {
+.profile {
   border-radius: 50px;
   margin: 0 10px;
 }
-div {
-  margin: 10px;
-}
-mat-accordion {
-  margin-bottom: 20px;
+.searchResult {
+  margin-bottom: 10px;
 }
 .navUsername {
   margin-left: auto;
 }
-.wide{
+.wide {
   width: 100%;
 }
 .cdk-drop-list {

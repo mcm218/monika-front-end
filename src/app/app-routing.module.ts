@@ -9,7 +9,10 @@ import { ProfileComponent } from "./profile/profile.component";
 const routes: Routes = [
   { path: "", component: HomeComponent, canActivate: [AuthGuard] },
   { path: "login", component: LoginComponent },
-  { path: "user", component: ProfileComponent, canActivate: [AuthGuard] }
+  {
+    path: "user",
+    component: ProfileComponent
+  }
 ];
 
 @NgModule({
