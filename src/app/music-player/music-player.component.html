@@ -78,6 +78,27 @@
             fxLayout="column"
           ></fa-icon>
         </button>
+        <button
+          *ngIf="!isFavorited"
+          (click)="toggleFavorite()"
+          mat-icon-button
+          fxLayout="column"
+        >
+          <fa-icon [icon]="faHeart" size="2x" fxLayout="column"></fa-icon>
+        </button>
+        <button
+          *ngIf="isFavorited"
+          (click)="toggleFavorite()"
+          mat-icon-button
+          fxLayout="column"
+        >
+          <fa-icon
+            [icon]="faHeart"
+            size="2x"
+            style="color: #7289da;"
+            fxLayout="column"
+          ></fa-icon>
+        </button>
       </div>
     </mat-card-content>
   </mat-card>

@@ -31,3 +31,7 @@ p {
 .song{
   min-height: 55px;
 }
+.list{
+  overflow: auto;
+  max-height: 600px;
+}

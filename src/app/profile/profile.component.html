@@ -31,8 +31,19 @@
     </a>
   </mat-toolbar>
   <div class="home" fxLayout fxLayout.xs="column" fxLayoutAlign="space-between">
-    <div class="panel" fxLayout="column" fxFlex="30%">
+    <div class="list panel" fxLayout="column" fxFlex="30%">
       <mat-card>
+        <div>
+          <a
+            fxLayout
+            fxLayoutAlign="start center"
+            (click)="selectedList = { title: 'Favorites', songs: favorites }"
+          >
+            <fa-icon [icon]="faCloud" size="2x" fxFlex="15%"></fa-icon>
+            <div fxFlex="5%"></div>
+            <h4>Favorites</h4></a
+          >
+        </div>
         <div>
           <a
             fxLayout
@@ -86,7 +97,7 @@
       </mat-card>
     </div>
     <div fxLayout="column" fxFlex="5%"></div>
-    <div fxLayout="column" class="panel" fxFlex="30%">
+    <div fxLayout="column" class="list panel" fxFlex="30%">
       <mat-card *ngIf="selectedList">
         <mat-card-title
           >{{ selectedList.title }}

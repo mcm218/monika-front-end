@@ -72,12 +72,16 @@ export class SearchComponent implements OnInit {
       this.playlist = false;
       this.db.search(this.query).subscribe(snapshots => {
         this.results = [];
+        console.log(snapshots.docs);
         snapshots.docs.forEach(snapshot => {
           this.results.push(snapshot.data());
         });
-        if (snapshots.length == 0) {
+        if (snapshots.docs.length == 0) {
           this.db.youtubeSearch(this.query, 0).subscribe(
             response => {
+              response.items.forEach(video => {
+                this.results.push(video);
+              });
               this.db.cacheSearch(this.query, response, false);
             },
             error => console.log(error)

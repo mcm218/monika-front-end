@@ -22,7 +22,13 @@ export class AuthGuard implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    this.authService.prevPath = state.url.replace("%3F","?").replace("%3D","=");
+    this.authService.prevPath = this.router.url
+      .replace("%3F", "?")
+      .replace("%3D", "=");
+    var index = this.router.url.search(/login/i);
+    if (index != -1) {
+      this.authService.prevPath = this.router.url.slice(0, index);
+    }
     console.log(this.authService.prevPath);
     if (this.authService.guildVerified) {
       return true;

@@ -232,4 +232,35 @@ export class DbService {
   youtubeSearch(q: string, key: number): Observable<any> {
     return this.http.get(this.searchPath[key] + q + "&type=video").pipe();
   }
+
+  checkFavorite(id: string) {
+    return this.db
+      .collection("users/" + this.auth.userId + "/favorites")
+      .doc(id)
+      .get();
+  }
+
+  toggleFavorite(id: string, song: any) {
+    var ref = this.db
+      .collection("users/" + this.auth.userId + "/favorites")
+      .doc(id);
+
+    ref.get().subscribe(doc => {
+      if (doc.exists) {
+        ref.delete();
+      } else {
+        ref.set({
+          id: song.id,
+          thumbnail: song.thumbnail,
+          title: song.title,
+          url: song.url
+        });
+      }
+    });
+  }
+  getFavorites() {
+    return this.db
+      .collection("users/" + this.auth.userId + "/favorites")
+      .snapshotChanges();
+  }
 }

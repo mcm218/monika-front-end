@@ -47,6 +47,7 @@ export class ProfileComponent implements OnInit {
   code: string;
 
   user: any;
+  favorites: any[];
   history: any[];
   mostAdded: any[];
   lists: any[];
@@ -93,19 +94,29 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (!this.db.guild) {
-      return;
-    }
     this.getGuilds();
     this.newList = [];
     this.auth.user.subscribe(user => {
       this.user = user;
       this.getSongs();
       this.getQueue();
+      this.getFavorites();
       this.getLists();
     });
+    if (!this.db.guild) {
+      this.router.navigate([""]);
+      return;
+    }
   }
 
+  getFavorites() {
+    this.db.getFavorites().subscribe(snapshots => {
+      this.favorites = [];
+      snapshots.forEach(snapshot => {
+        this.favorites.push(snapshot.payload.doc.data());
+      });
+    });
+  }
   googleSignIn() {
     this.auth.googleLogin().then(() => {
       if (this.auth.getCurrentUser) {

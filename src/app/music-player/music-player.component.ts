@@ -7,9 +7,11 @@ import {
   faVolumeOff,
   faVolumeUp,
   faRandom,
-  faUndo
+  faUndo,
+  faHeart
 } from "@fortawesome/free-solid-svg-icons";
 import { DbService } from "../db.service";
+import { timingSafeEqual } from "crypto";
 
 @Component({
   selector: "app-music-player",
@@ -25,6 +27,8 @@ export class MusicPlayerComponent implements OnInit {
   faVolumeUp = faVolumeUp;
   faRandom = faRandom;
   faLoop = faUndo;
+  faHeart = faHeart;
+  isFavorited = false;
   volume = 7;
   shuffleMode = false;
   loop = 0;
@@ -54,13 +58,31 @@ export class MusicPlayerComponent implements OnInit {
       this.queue = doc.payload.data().queue;
       this.song = this.queue[0];
       if (this.song) {
-        this.thumbnail = this.song.thumbnail;
+        if (this.song.thumbnail.url) {
+          this.thumbnail = this.song.thumbnail.url;
+        } else {
+          this.thumbnail = this.song.thumbnail;
+        }
+        this.db.checkFavorite(this.song.id).subscribe(doc => {
+          if (doc.exists) {
+            this.isFavorited = true;
+          } else {
+            this.isFavorited = false;
+          }
+        });
       } else {
         this.thumbnail = "";
+        this.isFavorited = false;
       }
     });
   }
-
+  toggleFavorite() {
+    if (!this.song) {
+      return;
+    }
+    this.isFavorited = !this.isFavorited;
+    this.db.toggleFavorite(this.song.id, this.song);
+  }
   getController() {
     this.db.getController().subscribe(doc => {
       let controller = doc.payload.data();

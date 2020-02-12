@@ -112,12 +112,11 @@ export class AuthService {
     console.log("Spotify:");
     console.log(refreshToken);
     console.log(url);
-    // body.set("client_id", environment.spotifyData.client_id);
-    // body.set("client_secret", environment.spotifyData.client_secret);
+    body.set("client_id", environment.spotifyData.client_id);
+    body.set("client_secret", environment.spotifyData.client_secret);
     body.set("grant_type", "refresh_token");
     body.set("refresh_token", refreshToken);
     var headers = new HttpHeaders({
-      Authorization: `Basic ${environment.spotifyData.client_id}:${environment.spotifyData.client_secret}`,
       "Content-Type": "application/x-www-form-urlencoded"
     });
     this.http
@@ -129,7 +128,11 @@ export class AuthService {
           console.log(response);
           console.log(response["access_token"]);
           this.accessToken = response["access_token"];
-          this.cookieService.set("spotify-token", response["access_token"]);
+          this.cookieService.set(
+            "spotify-token",
+            response["access_token"],
+            new Date().getTime() / 1000 + response["expires_in"]
+          );
           this.cookieService.set(
             "spotify-refresh-token",
             response["refresh_token"]
@@ -142,16 +145,16 @@ export class AuthService {
   }
 
   authorizeDiscord(url: string, code: string) {
-    console.log("Retrieving G Access Token...");
     if (this.cookieService.check("google-token")) {
+      console.log("Retrieving G Access Token...");
       this.googleAccessToken = this.cookieService.get("google-token");
     }
-    console.log("Retrieving Spotify Access Token...");
     if (this.cookieService.check("spotify-token")) {
+      console.log("Retrieving Spotify Access Token...");
       this.spotifyAccessToken = this.cookieService.get("spotify-token");
     }
-    console.log("Retrieving Discord Access Token...");
     if (this.cookieService.check("discord-token")) {
+      console.log("Retrieving Discord Access Token...");
       this.accessToken = this.cookieService.get("discord-token");
       this.authenticated = true;
       this.verifyGuild();
@@ -192,15 +195,19 @@ export class AuthService {
       );
   }
   refreshToken() {
-    var url = window.location.href.split("/")[0] + "/login";
-    console.log("Refreshing token...");
+    var url = window.location.href;
+    var index = url.search(/login/i);
+    if (index == -1) {
+      url += "login";
+    }
+    console.log("Refreshing token: " + url);
     var body = new URLSearchParams();
     var refreshToken = this.cookieService.get("discord-refresh-token");
     console.log(refreshToken);
     body.set("client_id", environment.discordData.client_id);
     body.set("client_secret", environment.discordData.client_secret);
     body.set("grant_type", "refresh_token");
-    body.set("code", refreshToken);
+    body.set("refresh_token", refreshToken);
     body.set("redirect_uri", url);
     body.set("scope", environment.discordData.scope);
     var headers = new HttpHeaders({
@@ -215,7 +222,11 @@ export class AuthService {
           console.log(response);
           console.log(response["access_token"]);
           this.accessToken = response["access_token"];
-          this.cookieService.set("discord-token", response["access_token"]);
+          this.cookieService.set(
+            "discord-token",
+            response["access_token"],
+            new Date().getTime() / 1000 + response["expires_in"]
+          );
           this.cookieService.set(
             "discord-refresh-token",
             response["refresh_token"]
@@ -244,7 +255,21 @@ export class AuthService {
           this.createUser(user);
           this.user.next(user);
           this.userId = user.id;
-          this.router.navigate([this.prevPath]);
+          if (!this.prevPath) {
+            this.prevPath = this.router.url
+              .replace("%3F", "?")
+              .replace("%3D", "=");
+            var index = this.router.url.search(/login/i);
+            if (index != -1) {
+              this.prevPath = this.router.url.slice(0, index);
+            }
+          }
+          index = this.prevPath.search(/code/i);
+          if (index == -1) {
+            this.router.navigate([this.prevPath]);
+          } else {
+            this.router.navigate([""]);
+          }
         },
         error => {
           console.log(error);
@@ -276,20 +301,22 @@ export class AuthService {
   }
 
   verifyGuild() {
-    console.log("Retrieving G Access Token...");
     if (this.cookieService.check("google-token")) {
+      console.log("Retrieving G Access Token...");
       this.googleAccessToken = this.cookieService.get("google-token");
     }
-    console.log("Retrieving Spotify Access Token...");
     if (this.cookieService.check("spotify-token")) {
+      console.log("Retrieving Spotify Access Token...");
       this.spotifyAccessToken = this.cookieService.get("spotify-token");
-      // this.refreshSpotifyToken();
+    } else if (this.cookieService.check("spotify-refresh-token")) {
+      this.refreshSpotifyToken();
     }
-    console.log("Retrieving Discord Access Token...");
     if (this.cookieService.check("discord-token")) {
+      console.log("Retrieving Discord Access Token...");
       this.accessToken = this.cookieService.get("discord-token");
       this.authenticated = true;
-      // this.refreshToken();
+    } else if (this.cookieService.check("discord-refresh-token")) {
+      this.refreshToken();
     }
     var headers = new HttpHeaders({
       Authorization: `Bearer ${this.accessToken}`,
@@ -317,6 +344,7 @@ export class AuthService {
           }
         },
         error => {
+          this.router.navigate(["/login"]);
           console.log(error);
         }
       );
