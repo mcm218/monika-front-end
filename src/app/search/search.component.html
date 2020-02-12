@@ -34,9 +34,9 @@
         *ngFor="let result of results; let i = index"
         (click)="addToQueue(i)"
       >
-        <img fxFlex="30%" src="{{ result.snippet.thumbnails.high.url }}" />
+        <img width="20%" src="{{ result.snippet.thumbnails.high.url }}" />
         <div fxFlex="5%"></div>
-        <p fxFlex="65%">{{ result.snippet.title }}</p>
+        <p fxFlex="75%">{{ result.snippet.title }}</p>
       </div>
     </div>
   </mat-card-content>

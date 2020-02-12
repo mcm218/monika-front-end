@@ -31,7 +31,131 @@
     </a>
   </mat-toolbar>
   <div class="home" fxLayout fxLayout.xs="column" fxLayoutAlign="space-between">
-    <div class="list panel" fxLayout="column" fxFlex="30%">
+    <div class="panel" fxLayout="column" fxFlex="25%">
+      <mat-card>
+        <mat-card-content>
+          <mat-form-field class="wide">
+            <input
+              [(ngModel)]="query"
+              matInput
+              placeholder="Search"
+              (keydown.enter)="search()"
+            />
+            <button
+              mat-button
+              *ngIf="query"
+              matSuffix
+              mat-icon-button
+              aria-label="Clear"
+              (click)="clear()"
+            >
+              <fa-icon [icon]="faTimes"></fa-icon>
+            </button>
+            <button
+              mat-button
+              *ngIf="query"
+              matSuffix
+              mat-icon-button
+              aria-label="Submit"
+              (click)="search()"
+            >
+              <fa-icon [icon]="faSearch"></fa-icon>
+            </button>
+          </mat-form-field>
+          <div fxLayout="column" fxLayoutAlign="start start">
+            <div
+              class="searchResult"
+              *ngFor="let result of results; let i = index"
+              (click)="addToList(i)"
+            >
+              <img
+                fxFlex="20%"
+                src="{{ result.snippet.thumbnails.high.url }}"
+              />
+              <div fxFlex="5%"></div>
+              <p fxFlex="75%">{{ result.snippet.title }}</p>
+            </div>
+          </div>
+          <mat-form-field class="wide" *ngIf="newList && newList.length > 0">
+            <input [(ngModel)]="listTitle" matInput placeholder="Title" />
+            <button
+              mat-button
+              matSuffix
+              mat-icon-button
+              aria-label="Clear"
+              (click)="clearList()"
+            >
+              <fa-icon [icon]="faTimes"></fa-icon>
+            </button>
+            <button
+              matSuffix
+              mat-icon-button
+              aria-label="Submit"
+              (keydown.enter)="saveList()"
+              (click)="saveList()"
+            >
+              <fa-icon [icon]="faSave"></fa-icon>
+            </button>
+          </mat-form-field>
+          <div style="display:flex;flex-wrap:wrap" cdkDropListGroup>
+            <div
+              cdkDropList
+              [cdkDropListData]="i"
+              *ngFor="let song of newList; let i = index"
+              [style.width]="'100%'"
+            >
+              <div
+                fxLayout
+                fxLayoutAlign="start center"
+                cdkDrag
+                [cdkDragData]="i"
+                (cdkDragEntered)="drop($event)"
+              >
+                <button fxFlex="10%" (click)="remove(i)" mat-icon-button>
+                  <fa-icon [icon]="faTimes"></fa-icon>
+                </button>
+                <p fxFlex="90%" class="list">{{ song.title }}</p>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div fxLayout="column" fxFlex="5%"></div>
+    <div fxLayout="column" class="list panel" fxFlex="30%">
+      <mat-card *ngIf="selectedList">
+        <mat-card-title
+          >{{ selectedList.title }}
+          <button
+            *ngIf="selectedList.type === 'firestore'"
+            mat-icon-button
+            (click)="openDeleteDialog()"
+          >
+            <fa-icon [icon]="faTrash"></fa-icon>
+          </button>
+          <button
+            *ngIf="selectedList.type === 'firestore'"
+            mat-icon-button
+            (click)="editList(selectedList)"
+          >
+            <fa-icon [icon]="faPen"></fa-icon>
+          </button>
+        </mat-card-title>
+        <div
+          fxLayout
+          fxLayoutAlign="left center"
+          *ngFor="let song of selectedList.songs"
+          (click)="addSongFromList(song)"
+        >
+          <button fxFlex="10%" mat-icon-button>
+            <fa-icon [icon]="faPlus"></fa-icon>
+          </button>
+          <p>{{ song.title }}</p>
+        </div>
+      </mat-card>
+    </div>
+    <div fxLayout="column" fxFlex="10%"></div>
+    <div class="list panel" fxLayout="column" fxFlex="25%">
       <mat-card>
         <div>
           <a
@@ -94,123 +218,6 @@
             <h4>{{ list.title }}</h4>
           </a>
         </div>
-      </mat-card>
-    </div>
-    <div fxLayout="column" fxFlex="5%"></div>
-    <div fxLayout="column" class="list panel" fxFlex="30%">
-      <mat-card *ngIf="selectedList">
-        <mat-card-title
-          >{{ selectedList.title }}
-          <button
-            *ngIf="selectedList.type === 'firestore'"
-            mat-icon-button
-            (click)="editList(selectedList)"
-          >
-            <fa-icon [icon]="faPen"></fa-icon>
-          </button>
-        </mat-card-title>
-        <div
-          fxLayout
-          fxLayoutAlign="left center"
-          *ngFor="let song of selectedList.songs"
-          (click)="addSongFromList(song)"
-        >
-          <button fxFlex="10%" mat-icon-button>
-            <fa-icon [icon]="faPlus"></fa-icon>
-          </button>
-          <p>{{ song.title }}</p>
-        </div>
-      </mat-card>
-    </div>
-    <div fxLayout="column" fxFlex="5%"></div>
-    <div class="panel" fxLayout="column" fxFlex="30%">
-      <mat-card>
-        <mat-card-content>
-          <mat-form-field class="wide">
-            <input
-              [(ngModel)]="query"
-              matInput
-              placeholder="Search"
-              (keydown.enter)="search()"
-            />
-            <button
-              mat-button
-              *ngIf="query"
-              matSuffix
-              mat-icon-button
-              aria-label="Clear"
-              (click)="clear()"
-            >
-              <fa-icon [icon]="faTimes"></fa-icon>
-            </button>
-            <button
-              mat-button
-              *ngIf="query"
-              matSuffix
-              mat-icon-button
-              aria-label="Submit"
-              (click)="search()"
-            >
-              <fa-icon [icon]="faSearch"></fa-icon>
-            </button>
-          </mat-form-field>
-          <div fxLayout="column" fxLayoutAlign="start center">
-            <div
-              class="searchResult"
-              *ngFor="let result of results; let i = index"
-              (click)="addToList(i)"
-            >
-              <img
-                fxFlex="30%"
-                src="{{ result.snippet.thumbnails.high.url }}"
-              />
-              <div fxFlex="5%"></div>
-              <p fxFlex="65%">{{ result.snippet.title }}</p>
-            </div>
-          </div>
-          <mat-form-field class="wide" *ngIf="newList && newList.length > 0">
-            <input [(ngModel)]="listTitle" matInput placeholder="Title" />
-            <button
-              mat-button
-              matSuffix
-              mat-icon-button
-              aria-label="Clear"
-              (click)="clearList()"
-            >
-              <fa-icon [icon]="faTimes"></fa-icon>
-            </button>
-            <button
-              matSuffix
-              mat-icon-button
-              aria-label="Submit"
-              (keydown.enter)="saveList()"
-              (click)="saveList()"
-            >
-              <fa-icon [icon]="faSave"></fa-icon>
-            </button>
-          </mat-form-field>
-          <div style="display:flex;flex-wrap:wrap" cdkDropListGroup>
-            <div
-              cdkDropList
-              [cdkDropListData]="i"
-              *ngFor="let song of newList; let i = index"
-              [style.width]="'100%'"
-            >
-              <div
-                fxLayout
-                fxLayoutAlign="start center"
-                cdkDrag
-                [cdkDragData]="i"
-                (cdkDragEntered)="drop($event)"
-              >
-                <button fxFlex="10%" (click)="remove(i)" mat-icon-button>
-                  <fa-icon [icon]="faTimes"></fa-icon>
-                </button>
-                <p fxFlex="90%" class="list">{{ song.title }}</p>
-              </div>
-            </div>
-          </div>
-        </mat-card-content>
       </mat-card>
     </div>
   </div>

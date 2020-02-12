@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit {
       "&redirect_uri=" +
       formattedUrl +
       "&response_type=code&scope=identify%20guilds";
-      
+
     this.route.queryParams.subscribe(params => {
       this.code = params["code"];
       console.log(this.code);

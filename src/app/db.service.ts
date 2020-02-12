@@ -104,6 +104,12 @@ export class DbService {
   getLists(uid: string) {
     return this.db.collection("users/" + uid + "/lists").snapshotChanges();
   }
+  deleteList(id: string) {
+    this.db
+      .collection("users/" + this.auth.userId + "/lists")
+      .doc(id)
+      .delete();
+  }
   getYoutubeLists(): Observable<any> {
     var user = this.auth.getCurrentUser;
     if (user) {
@@ -261,6 +267,12 @@ export class DbService {
   getFavorites() {
     return this.db
       .collection("users/" + this.auth.userId + "/favorites")
+      .snapshotChanges();
+  }
+
+  getUsers() {
+    return this.db
+      .collection("guilds/" + this.guild.id + "/VC")
       .snapshotChanges();
   }
 }

@@ -176,6 +176,7 @@ export class AuthService {
       .pipe()
       .subscribe(
         response => {
+          console.log(response);
           this.authenticated = true;
           this.accessToken = response["access_token"];
           this.cookieService.set(
@@ -255,6 +256,7 @@ export class AuthService {
           this.createUser(user);
           this.user.next(user);
           this.userId = user.id;
+          this.verifyVoice();
           if (!this.prevPath) {
             this.prevPath = this.router.url
               .replace("%3F", "?")
@@ -350,32 +352,50 @@ export class AuthService {
       );
   }
 
-  verifyVoice(testServer: boolean) {
+  verifyVoice() {
     if (!this.authenticated || !this.guildVerified) {
       return;
     }
+    var accessToken = this.cookieService.get("discord-token");
     var headers = new HttpHeaders({
-      Authorization: `Bearer ${this.accessToken}`,
-      "Content-Type": "application/x-www-form-urlencoded"
+      Authorization: `Bearer ${accessToken}`,
+      // "User-Agent": "MonikaBot (https://monika-discord-bot.web.app/, 1.0)",
+      // "Content-Type": "application/x-www-form-urlencoded"
     });
-    var id = testServer
-      ? environment.discordData.testVoiceId
-      : environment.discordData.mainVoiceId;
+    var id = true ? "673878843060256798" : environment.discordData.mainVoiceId;
     this.http
-      .get(this.discordPath + "channels/" + id, {
+      .get(this.discordPath + "guilds/" + id + "/channels", {
         headers: headers
       })
       .subscribe(
         response => {
           console.log(response);
-          let users = response["recipients"];
-          console.log(users);
         },
-        error => {
+        async error => {
+          if (error.status == 429) {
+            await this.delay(error.error.retry_after);
+            this.http
+              .get(this.discordPath + "channels/" + id, {
+                headers: headers
+              })
+              .subscribe(
+                response => {
+                  console.log(response);
+                },
+                error => {
+                  console.log(error);
+                }
+              );
+          }
           console.log(error);
         }
       );
   }
+
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   createUser(user: any) {
     this.db
       .collection("users")

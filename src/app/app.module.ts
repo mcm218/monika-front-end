@@ -16,7 +16,9 @@ import {
   MatInputModule,
   MatSelectModule,
   MatSnackBarModule,
-  MatExpansionModule
+  MatExpansionModule,
+  MatTooltipModule,
+  MatDialogModule
 } from "@angular/material";
 import { DragDropModule } from "@angular/cdk/drag-drop";
 import { AngularFireModule } from "@angular/fire";
@@ -30,7 +32,7 @@ import { HomeComponent } from "./home/home.component";
 import { SearchComponent } from "./search/search.component";
 import { environment } from "src/environments/environment";
 import { LoginComponent } from "./login/login.component";
-import { ProfileComponent } from "./profile/profile.component";
+import { ProfileComponent, DeleteDialog } from "./profile/profile.component";
 
 @NgModule({
   declarations: [
@@ -40,7 +42,8 @@ import { ProfileComponent } from "./profile/profile.component";
     HomeComponent,
     SearchComponent,
     LoginComponent,
-    ProfileComponent
+    ProfileComponent,
+    DeleteDialog
   ],
   imports: [
     BrowserModule,
@@ -59,12 +62,16 @@ import { ProfileComponent } from "./profile/profile.component";
     MatSelectModule,
     MatExpansionModule,
     MatSnackBarModule,
+    MatTooltipModule,
+    MatDialogModule,
     DragDropModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,
     AngularFireAuthModule,
     HttpClientModule
   ],
+  exports: [DeleteDialog],
+  entryComponents: [DeleteDialog],
   providers: [CookieService],
   bootstrap: [AppComponent]
 })

@@ -1,0 +1,9 @@
+<div mat-dialog-content>
+  <p>Are you sure you want to delete {{data.selectedList.title}}</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onNoClick()">No Thanks</button>
+  <button mat-button [mat-dialog-close]="data.selectedList" cdkFocusInitial>
+    Delete
+  </button>
+</div>

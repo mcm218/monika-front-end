@@ -6,3 +6,7 @@ img {
 .navUsername {
   margin-left: auto;
 }
+
+.activeUser {
+  margin: 10px 0;
+}

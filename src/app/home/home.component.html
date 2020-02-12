@@ -20,15 +20,35 @@
   />
 </mat-toolbar>
 <div class="home" fxLayout fxLayout.xs="column" fxLayoutAlign="space-between">
-  <div class="panel" fxLayout="column" fxFlex="30%">
+  <div class="panel" fxLayout="column" fxFlex="25%">
     <app-search></app-search>
   </div>
-  <div fxLayout="column" fxFlex="5%"></div>
+  <div fxLayout="column" fxLayoutAlign="start center" fxFlex="10%">
+    <div fxLayout="row" class="activeUser" *ngFor="let user of users">
+      <img
+        matTooltip="{{ user.username }}"
+        height="50px"
+        src="https://cdn.discordapp.com/avatars/{{ user.id }}/{{ user.avatar }}"
+      />
+      <div fxLayout="column" fxLayoutAlign="center center">
+        <fa-icon
+          *ngIf="user.muted"
+          [icon]="faMicrophoneSlash"
+          style="color: #7289da;"
+        ></fa-icon>
+        <fa-icon
+          *ngIf="user.deaf"
+          [icon]="faPhoneSlash"
+          style="color: #7289da;"
+        ></fa-icon>
+      </div>
+    </div>
+  </div>
   <div fxLayout="column" fxFlex="30%">
     <app-music-player></app-music-player>
   </div>
-  <div fxLayout="column" fxFlex="5%"></div>
-  <div class="panel" fxLayout="column" fxFlex="30%">
+  <div fxLayout="column" fxFlex="10%"></div>
+  <div class="panel" fxLayout="column" fxFlex="25%">
     <app-songs></app-songs>
   </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Inject } from "@angular/core";
 import { AuthService } from "../auth.service";
 import { DbService } from "../db.service";
 import {
@@ -8,7 +8,8 @@ import {
   faSearch,
   faSave,
   faPen,
-  faCloud
+  faCloud,
+  faTrash
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faGoogle,
@@ -23,6 +24,15 @@ import {
 } from "@angular/cdk/drag-drop";
 import { environment } from "src/environments/environment";
 import { ActivatedRoute, Router } from "@angular/router";
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA
+} from "@angular/material/dialog";
+
+export interface DialogData {
+  selectedList: { title: string; songs: any[] };
+}
 
 @Component({
   selector: "app-profile",
@@ -40,6 +50,7 @@ export class ProfileComponent implements OnInit {
   faHome = faHome;
   faPlus = faPlus;
   faPen = faPen;
+  faTrash = faTrash;
 
   spotifyPath = "https://accounts.spotify.com/authorize";
   spotifyUrl;
@@ -69,7 +80,8 @@ export class ProfileComponent implements OnInit {
     private router: Router,
     private auth: AuthService,
     private db: DbService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    public dialog: MatDialog
   ) {
     this.url = window.location.href.split("?")[0];
     var formattedUrl = this.url.replace(":", "%3A").replace("/", "%2F");
@@ -107,6 +119,21 @@ export class ProfileComponent implements OnInit {
       this.router.navigate([""]);
       return;
     }
+  }
+
+  openDeleteDialog(): void {
+    const dialogRef = this.dialog.open(DeleteDialog, {
+      width: "250px",
+      data: { selectedList: this.selectedList }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
+      if (result) {
+        this.db.deleteList(this.selectedList.id);
+        this.selectedList = [];
+      }
+    });
   }
 
   getFavorites() {
@@ -495,5 +522,20 @@ export class ProfileComponent implements OnInit {
   clear() {
     this.query = "";
     this.results = [];
+  }
+}
+
+@Component({
+  selector: "delete-dialog",
+  templateUrl: "delete-dialog.html"
+})
+export class DeleteDialog {
+  constructor(
+    public dialogRef: MatDialogRef<DeleteDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: DialogData
+  ) {}
+
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 }
