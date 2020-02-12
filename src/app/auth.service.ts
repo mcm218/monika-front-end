@@ -90,7 +90,9 @@ export class AuthService {
           this.cookieService.set(
             "spotify-token",
             response["access_token"],
-            new Date().getTime() / 1000 + response["expires_in"]
+            new Date(
+              new Date().getTime() + Number(response["expires_in"] * 1000)
+            )
           );
           this.cookieService.set(
             "spotify-refresh-token",
@@ -117,6 +119,9 @@ export class AuthService {
     body.set("grant_type", "refresh_token");
     body.set("refresh_token", refreshToken);
     var headers = new HttpHeaders({
+      Authorization: `Basic ${btoa(environment.spotifyData.client_id)}:${
+        environment.spotifyData.client_secret
+      }`,
       "Content-Type": "application/x-www-form-urlencoded"
     });
     this.http
@@ -131,7 +136,9 @@ export class AuthService {
           this.cookieService.set(
             "spotify-token",
             response["access_token"],
-            new Date().getTime() / 1000 + response["expires_in"]
+            new Date(
+              new Date().getTime() + Number(response["expires_in"] * 1000)
+            )
           );
           this.cookieService.set(
             "spotify-refresh-token",
@@ -139,6 +146,7 @@ export class AuthService {
           );
         },
         error => {
+          this.cookieService.delete("spotify-refresh-token");
           console.log(error);
         }
       );
@@ -182,7 +190,9 @@ export class AuthService {
           this.cookieService.set(
             "discord-token",
             response["access_token"],
-            new Date().getTime() / 1000 + response["expires_in"]
+            new Date(
+              new Date().getTime() + Number(response["expires_in"] * 1000)
+            )
           );
           this.cookieService.set(
             "discord-refresh-token",
@@ -226,7 +236,9 @@ export class AuthService {
           this.cookieService.set(
             "discord-token",
             response["access_token"],
-            new Date().getTime() / 1000 + response["expires_in"]
+            new Date(
+              new Date().getTime() + Number(response["expires_in"] * 1000)
+            )
           );
           this.cookieService.set(
             "discord-refresh-token",
@@ -235,6 +247,7 @@ export class AuthService {
           this.verifyGuild();
         },
         error => {
+          this.cookieService.delete("discord-refresh-token");
           console.log(error);
         }
       );
@@ -356,15 +369,16 @@ export class AuthService {
     if (!this.authenticated || !this.guildVerified) {
       return;
     }
-    var accessToken = this.cookieService.get("discord-token");
     var headers = new HttpHeaders({
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bot ${environment.discordData.botToken}`
       // "User-Agent": "MonikaBot (https://monika-discord-bot.web.app/, 1.0)",
       // "Content-Type": "application/x-www-form-urlencoded"
     });
-    var id = true ? "673878843060256798" : environment.discordData.mainVoiceId;
+    var id = true
+      ? environment.discordData.testVoiceId
+      : environment.discordData.mainVoiceId;
     this.http
-      .get(this.discordPath + "guilds/" + id + "/channels", {
+      .get(this.discordPath + "channels/" + id, {
         headers: headers
       })
       .subscribe(
@@ -381,6 +395,7 @@ export class AuthService {
               .subscribe(
                 response => {
                   console.log(response);
+                  console.log((response as any).recipients);
                 },
                 error => {
                   console.log(error);
