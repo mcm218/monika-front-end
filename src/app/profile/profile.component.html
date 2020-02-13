@@ -124,8 +124,19 @@
     <div fxLayout="column" fxFlex="5%"></div>
     <div fxLayout="column" class="list panel" fxFlex="30%">
       <mat-card *ngIf="selectedList">
-        <mat-card-title
-          >{{ selectedList.title }}
+        <div fxLayout="row" fxLayout="space-between start">
+          <h2>{{ selectedList.title }}</h2>
+          <button
+            *ngIf="
+              selectedList.type !== 'spotify' &&
+              selectedList.title !== 'Most Added' &&
+              selectedList.title !== 'History'
+            "
+            mat-icon-button
+            (click)="addListToQueue(selectedList)"
+          >
+            <fa-icon [icon]="faPlus"></fa-icon>
+          </button>
           <button
             *ngIf="selectedList.type === 'firestore'"
             mat-icon-button
@@ -140,7 +151,7 @@
           >
             <fa-icon [icon]="faPen"></fa-icon>
           </button>
-        </mat-card-title>
+        </div>
         <div
           fxLayout
           fxLayoutAlign="left center"

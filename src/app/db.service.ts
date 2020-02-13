@@ -142,6 +142,9 @@ export class DbService {
   }
 
   getQueue(): Observable<any> {
+    if (!this.guild) {
+      return of(null);
+    }
     var path = "guilds/" + this.guild.id + "/VC";
     return this.db
       .collection(path)

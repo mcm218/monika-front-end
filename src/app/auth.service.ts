@@ -84,7 +84,6 @@ export class AuthService {
       .pipe()
       .subscribe(
         response => {
-          console.log(response);
           this.authenticated = true;
           this.spotifyAccessToken = response["access_token"];
           this.cookieService.set(
@@ -96,9 +95,11 @@ export class AuthService {
           );
           this.cookieService.set(
             "spotify-refresh-token",
-            response["refresh_token"]
+            response["refresh_token"],
+            undefined,
+            "/"
           );
-          console.log("spotify-refresh-token");
+          console.log(response["refresh_token"]);
         },
         error => {
           console.log(error);
@@ -111,17 +112,17 @@ export class AuthService {
     var url = full[0] + "//" + full[2] + "/user";
     var body = new URLSearchParams();
     var refreshToken = this.cookieService.get("spotify-refresh-token");
-    console.log("Spotify:");
-    console.log(refreshToken);
-    console.log(url);
-    body.set("client_id", environment.spotifyData.client_id);
-    body.set("client_secret", environment.spotifyData.client_secret);
+    console.log("Spotify: " + refreshToken);
+    // body.set("client_id", environment.spotifyData.client_id);
+    // body.set("client_secret", environment.spotifyData.client_secret);
     body.set("grant_type", "refresh_token");
     body.set("refresh_token", refreshToken);
     var headers = new HttpHeaders({
-      Authorization: `Basic ${btoa(environment.spotifyData.client_id)}:${
-        environment.spotifyData.client_secret
-      }`,
+      Authorization: `Basic ${btoa(
+        environment.spotifyData.client_id +
+          ":" +
+          environment.spotifyData.client_secret
+      )}`,
       "Content-Type": "application/x-www-form-urlencoded"
     });
     this.http
@@ -130,8 +131,6 @@ export class AuthService {
       .subscribe(
         response => {
           this.authenticated = true;
-          console.log(response);
-          console.log(response["access_token"]);
           this.accessToken = response["access_token"];
           this.cookieService.set(
             "spotify-token",
@@ -153,6 +152,7 @@ export class AuthService {
   }
 
   authorizeDiscord(url: string, code: string) {
+    console.log("Authorizaing Discord...");
     if (this.cookieService.check("google-token")) {
       console.log("Retrieving G Access Token...");
       this.googleAccessToken = this.cookieService.get("google-token");
@@ -161,7 +161,10 @@ export class AuthService {
       console.log("Retrieving Spotify Access Token...");
       this.spotifyAccessToken = this.cookieService.get("spotify-token");
     }
-    if (this.cookieService.check("discord-token")) {
+    if (
+      this.cookieService.check("discord-token") ||
+      this.authenticated == true
+    ) {
       console.log("Retrieving Discord Access Token...");
       this.accessToken = this.cookieService.get("discord-token");
       this.authenticated = true;
@@ -183,7 +186,8 @@ export class AuthService {
       .post(this.tokenUrl, body.toString(), { headers: headers })
       .pipe()
       .subscribe(
-        response => {
+        async response => {
+          await this.delay(200);
           console.log(response);
           this.authenticated = true;
           this.accessToken = response["access_token"];
@@ -228,7 +232,8 @@ export class AuthService {
       .post(this.tokenUrl, body.toString(), { headers: headers })
       .pipe()
       .subscribe(
-        response => {
+        async response => {
+          await this.delay(200);
           this.authenticated = true;
           console.log(response);
           console.log(response["access_token"]);
@@ -254,6 +259,7 @@ export class AuthService {
   }
 
   getUser() {
+    console.log("Getting Discord user...");
     if (!this.authenticated) {
       return;
     }
@@ -264,7 +270,8 @@ export class AuthService {
     this.http
       .get(this.discordPath + "users/@me", { headers: headers })
       .subscribe(
-        response => {
+        async response => {
+          await this.delay(200);
           let user = response as User;
           this.createUser(user);
           this.user.next(user);
@@ -280,9 +287,12 @@ export class AuthService {
             }
           }
           index = this.prevPath.search(/code/i);
+
           if (index == -1) {
+            console.log("Navigating to: " + this.prevPath);
             this.router.navigate([this.prevPath]);
           } else {
+            console.log("Navigating to: /");
             this.router.navigate([""]);
           }
         },
@@ -292,30 +302,31 @@ export class AuthService {
       );
   }
 
-  getGuilds(testServer: boolean) {
-    if (!this.authenticated) {
-      return;
-    }
-    var headers = new HttpHeaders({
-      Authorization: `Bearer ${this.accessToken}`,
-      "Content-Type": "application/x-www-form-urlencoded"
-    });
-    var id = testServer
-      ? environment.discordData.testGuildId
-      : environment.discordData.mainGuildId;
-    this.http
-      .get(this.discordPath + "guilds/" + id, { headers: headers })
-      .subscribe(
-        response => {
-          console.log(response);
-        },
-        error => {
-          console.log(error);
-        }
-      );
-  }
+  // getGuilds(testServer: boolean) {
+  //   if (!this.authenticated) {
+  //     return;
+  //   }
+  //   var headers = new HttpHeaders({
+  //     Authorization: `Bearer ${this.accessToken}`,
+  //     "Content-Type": "application/x-www-form-urlencoded"
+  //   });
+  //   var id = testServer
+  //     ? environment.discordData.testGuildId
+  //     : environment.discordData.mainGuildId;
+  //   this.http
+  //     .get(this.discordPath + "guilds/" + id, { headers: headers })
+  //     .subscribe(
+  //       response => {
+  //         console.log(response);
+  //       },
+  //       error => {
+  //         console.log(error);
+  //       }
+  //     );
+  // }
 
-  verifyGuild() {
+  async verifyGuild() {
+    console.log("Verifying guild membership...");
     if (this.cookieService.check("google-token")) {
       console.log("Retrieving G Access Token...");
       this.googleAccessToken = this.cookieService.get("google-token");
@@ -340,39 +351,70 @@ export class AuthService {
     this.http
       .get(this.discordPath + "users/@me/guilds", { headers: headers })
       .subscribe(
-        response => {
+        async response => {
           let guilds = response as Array<any>;
           for (let guild of guilds) {
             if (
               guild.id == environment.discordData.testGuildId ||
               guild.id == environment.discordData.mainGuildId
             ) {
-              this.cookieService.set("guildVerified", "true");
               this.guildVerified = true;
-              console.log("Guild verified");
-              this.getUser();
               this.guilds.push(guild);
             }
           }
-          if (!this.guildVerified) {
+          if (this.guildVerified) {
+            this.cookieService.set("guildVerified", "true");
+            console.log("Guild verified");
+            this.getUser();
+          } else {
+            console.log("Navigating to: /login");
             this.router.navigate(["/login"]);
           }
         },
-        error => {
-          this.router.navigate(["/login"]);
-          console.log(error);
+        async error => {
+          if (error.status == 429) {
+            await this.delay(error.error.retry_after);
+            this.http
+              .get(this.discordPath + "users/@me/guilds", { headers: headers })
+              .subscribe(
+                async response => {
+                  let guilds = response as Array<any>;
+                  for (let guild of guilds) {
+                    if (
+                      guild.id == environment.discordData.testGuildId ||
+                      guild.id == environment.discordData.mainGuildId
+                    ) {
+                      this.guildVerified = true;
+                      this.guilds.push(guild);
+                    }
+                  }
+                  if (this.guildVerified) {
+                    this.cookieService.set("guildVerified", "true");
+                    console.log("Guild verified");
+                    this.getUser();
+                  } else {
+                    console.log("Navigating to: /login");
+                    this.router.navigate(["/login"]);
+                  }
+                },
+                error => {
+                  console.log(error);
+                }
+              );
+          } else {
+            console.log(error);
+          }
         }
       );
   }
 
   verifyVoice() {
+    console.log("Verifying user is in voice channel...");
     if (!this.authenticated || !this.guildVerified) {
       return;
     }
     var headers = new HttpHeaders({
       Authorization: `Bot ${environment.discordData.botToken}`
-      // "User-Agent": "MonikaBot (https://monika-discord-bot.web.app/, 1.0)",
-      // "Content-Type": "application/x-www-form-urlencoded"
     });
     var id = true
       ? environment.discordData.testVoiceId
@@ -401,8 +443,9 @@ export class AuthService {
                   console.log(error);
                 }
               );
+          } else {
+            console.log(error);
           }
-          console.log(error);
         }
       );
   }
@@ -418,7 +461,3 @@ export class AuthService {
       .set(user);
   }
 }
-// TR
-// 673878842628112414
-// Main
-// 523720897593606155

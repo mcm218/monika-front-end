@@ -29,7 +29,7 @@ export class AuthGuard implements CanActivate {
     if (index != -1) {
       this.authService.prevPath = this.router.url.slice(0, index);
     }
-    console.log(this.authService.prevPath);
+    console.log(this.authService.prevPath + ": checking if verified...");
     if (this.authService.guildVerified) {
       return true;
     } else {

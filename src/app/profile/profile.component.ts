@@ -239,7 +239,7 @@ export class ProfileComponent implements OnInit {
 
   getQueue() {
     this.db.getQueue().subscribe(doc => {
-      if (!doc.payload.data()) {
+      if (!doc || !doc.payload.data()) {
         this.queue = [];
         return;
       }
