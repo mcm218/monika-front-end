@@ -1,6 +1,15 @@
-mat-form-field{
-    width: 100%;
+mat-form-field {
+  width: 100%;
 }
-.searchResult{
-    margin-bottom: 10px;
+.searchResult {
+  padding: 0;
+  margin-bottom: 10px;
+  text-align: start;
+}
+.panel .list {
+  height: calc(100vh - 150px);
+  overflow: auto;
+}
+.panel {
+  height: calc(100vh - 100px);
 }

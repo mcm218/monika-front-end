@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card class="panel">
   <mat-card-content>
     <mat-form-field>
       <input
@@ -28,16 +28,35 @@
         <fa-icon [icon]="faSearch"></fa-icon>
       </button>
     </mat-form-field>
-    <div fxLayout="column" fxLayoutAlign="start center">
-      <div
+    <div class="list" fxLayout="column" fxLayoutAlign="start center">
+      <button
+        mat-button
         class="searchResult"
         *ngFor="let result of results; let i = index"
         (click)="addToQueue(i)"
       >
-        <img width="20%" src="{{ result.snippet.thumbnails.high.url }}" />
-        <div fxFlex="5%"></div>
-        <p fxFlex="75%">{{ result.snippet.title }}</p>
-      </div>
+        <div *ngIf="result.type === 'spotify'; else elseBlock">
+          <img
+            width="25%"
+            height="25%"
+            src="{{ result.track.album.images[1].url }}"
+          />
+          <div fxFlex="5%"></div>
+          <div fxLayout="column" fxLayoutAlign="center start">
+            <div style="font-weight: strong;">
+              {{ result.track.name }}
+            </div>
+            <div style="color: #7289da;">
+              {{ result.track.artists[0].name }}
+            </div>
+          </div>
+        </div>
+        <ng-template #elseBlock>
+          <img fxFlex="20%" src="{{ result.snippet.thumbnails.high.url }}" />
+          <div fxFlex="5%"></div>
+          <p fxFlex="75%">{{ result.snippet.title }}</p>
+        </ng-template>
+      </button>
     </div>
   </mat-card-content>
 </mat-card>

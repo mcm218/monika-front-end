@@ -1,8 +1,11 @@
 <div class="container">
-  <mat-card>
+  <mat-card style="max-width: 300px;">
     <img *ngIf="song" [src]="thumbnail" mat-card-image />
     <mat-card-content>
       <h3 *ngIf="song">{{ song.title }}</h3>
+      <h4 *ngIf="song && song.artist" style="color: #7289da;">
+        {{ song.artist }}
+      </h4>
       <div class="volume-slider" fxLayout fxLayoutAlign="space-around center">
         <fa-icon [icon]="faVolumeOff" size="2x" fxLayout="column"></fa-icon>
         <mat-slider

@@ -1,0 +1,103 @@
+<div fxLayout>
+  <div class="panel" fxFlex="47.75%">
+    <mat-card class="list" *ngIf="selectedList">
+      <div fxLayout="row" fxLayout="space-between start">
+        <h2>{{ selectedList.title }}</h2>
+        <button
+          *ngIf="
+            selectedList.type !== 'spotify' &&
+            selectedList.title !== 'Most Added' &&
+            selectedList.title !== 'History'
+          "
+          mat-icon-button
+          (click)="addListToQueue(selectedList)"
+        >
+          <fa-icon [icon]="faPlus"></fa-icon>
+        </button>
+        <button
+          *ngIf="selectedList.type === 'firestore'"
+          mat-icon-button
+          (click)="openDeleteDialog()"
+        >
+          <fa-icon [icon]="faTrash"></fa-icon>
+        </button>
+        <button *ngIf="selectedList.type === 'firestore'" mat-icon-button>
+          <fa-icon [icon]="faPen"></fa-icon>
+        </button>
+      </div>
+      <div
+        fxLayout
+        fxLayoutAlign="left center"
+        *ngFor="let song of selectedList.songs"
+        (click)="addSongFromList(song)"
+      >
+        <button fxFlex="10%" mat-icon-button>
+          <fa-icon [icon]="faPlus"></fa-icon>
+        </button>
+        <p>{{ song.title }}</p>
+      </div>
+    </mat-card>
+  </div>
+  <div fxFlex="3%"></div>
+  <div class="panel" fxFlex="48.25%">
+    <mat-card class="list">
+      <div>
+        <a
+          fxLayout
+          fxLayoutAlign="start center"
+          (click)="selectedList = { title: 'Favorites', songs: favorites }"
+        >
+          <fa-icon [icon]="faCloud" size="2x" fxFlex="15%"></fa-icon>
+          <div fxFlex="5%"></div>
+          <h4>Favorites</h4></a
+        >
+      </div>
+      <div>
+        <a
+          fxLayout
+          fxLayoutAlign="start center"
+          (click)="selectedList = { title: 'Most Added', songs: mostAdded }"
+        >
+          <fa-icon [icon]="faCloud" size="2x" fxFlex="15%"></fa-icon>
+          <div fxFlex="5%"></div>
+          <h4>Most Added</h4></a
+        >
+      </div>
+      <div>
+        <a
+          fxLayout
+          fxLayoutAlign="start center"
+          (click)="selectedList = { title: 'History', songs: history }"
+        >
+          <fa-icon [icon]="faCloud" size="2x" fxFlex="15%"></fa-icon>
+          <div fxFlex="5%"></div>
+          <h4>History</h4></a
+        >
+      </div>
+      <div *ngFor="let list of lists">
+        <a fxLayout fxLayoutAlign="start center" (click)="selectedList = list">
+          <fa-icon
+            *ngIf="list.type === 'firestore'"
+            [icon]="faCloud"
+            size="2x"
+            fxFlex="15%"
+          ></fa-icon>
+          <fa-icon
+            *ngIf="list.type === 'spotify'"
+            [icon]="faSpotify"
+            size="2x"
+            fxFlex="15%"
+          ></fa-icon>
+          <fa-icon
+            *ngIf="list.type === 'youtube'"
+            [icon]="faYoutube"
+            size="2x"
+            fxFlex="15%"
+          ></fa-icon>
+          <div fxFlex="5%"></div>
+          <h4>{{ list.title }}</h4>
+        </a>
+      </div>
+    </mat-card>
+  </div>
+</div>

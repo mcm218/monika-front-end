@@ -122,7 +122,7 @@ export class DbService {
     var headers = new HttpHeaders({
       Authorization: `Bearer ${this.auth.spotifyAccessToken}`
     });
-    return this.http.get("https://api.spotify.com/v1/me/playlists?limit=50", {
+    return this.http.get("https://api.spotify.com/v1/me/playlists?limit=20", {
       headers: headers
     });
   }
@@ -134,6 +134,14 @@ export class DbService {
     return this.http.get(url, {
       headers: headers
     });
+  }
+  spotifySongSearch(q: string): Observable<any> {
+    q = q.split(" ").join("+");
+    var headers = new HttpHeaders({
+      Authorization: `Bearer ${this.auth.spotifyAccessToken}`
+    });
+    var url = "https://api.spotify.com/v1/search?q=" + q + "&type=track";
+    return this.http.get(url, { headers: headers });
   }
 
   selectGuild(guild) {

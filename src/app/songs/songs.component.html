@@ -1,18 +1,25 @@
-<mat-card>
-  <mat-card-content>
-    <div class="list" cdkDropList (cdkDropListDropped)="drop($event)">
-      <div *ngFor="let song of songs; let i = index">
-        <div
-          fxLayout
-          fxLayoutAlign="start center"
-          *ngIf="i > 0"
-          class="song"
-          cdkDrag
-        >
+<mat-card class="panel">
+  <div class="list" cdkDropList (cdkDropListDropped)="drop($event)">
+    <div *ngFor="let song of songs; let i = index">
+      <div
+        fxLayout
+        fxLayoutAlign="space-between center"
+        *ngIf="i > 0"
+        class="song"
+        cdkDrag
+      >
+        <div fxLayout fxFlex="100%" *ngIf="song.artist; else elseBlock">
           <button fxFlex="10%" (click)="remove(i)" mat-icon-button>
             <fa-icon [icon]="faTimes"></fa-icon>
           </button>
-          <p fxFlex="80%">{{ song.title }}</p>
+          <div fxFlex="80%" fxLayout="column" fxLayoutAlign="center start">
+            <div style="font-weight: strong;">
+              {{ song.title }}
+            </div>
+            <div style="color: #7289da;">
+              {{ song.artist }}
+            </div>
+          </div>
           <img
             height="50px"
             class="profile"
@@ -22,7 +29,21 @@
             }}"
           />
         </div>
+        <ng-template #elseBlock>
+          <button fxFlex="10%" (click)="remove(i)" mat-icon-button>
+            <fa-icon [icon]="faTimes"></fa-icon>
+          </button>
+          <div style="font-weight: strong;" fxFlex="80%">{{ song.title }}</div>
+          <img
+            height="50px"
+            class="profile"
+            *ngIf="song.user"
+            src="https://cdn.discordapp.com/avatars/{{ song.user.id }}/{{
+              song.user.avatar
+            }}"
+          />
+        </ng-template>
       </div>
     </div>
-  </mat-card-content>
+  </div>
 </mat-card>

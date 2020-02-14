@@ -45,6 +45,24 @@ export class SearchComponent implements OnInit {
   search() {
     this.results = [];
     this.query = this.query.toLowerCase();
+    if (!this.query || this.query === "") {
+      return;
+    }
+    var forceYoutube = this.query.search(/youtube/i);
+    if (this.auth.spotifyAccessToken && forceYoutube == -1) {
+      this.db.spotifySongSearch(this.query).subscribe(
+        response => {
+          var tracks = response.tracks.items;
+          tracks.forEach(track => {
+            // console.log(track.artists[0].name + " - " + track.name);
+            console.log(track);
+            this.results.push({ type: "spotify", track });
+          });
+        },
+        error => console.log(error)
+      );
+      return;
+    }
     var isPlaylist = this.query.search(/playlist/i);
     if (isPlaylist != -1) {
       this.playlist = true;
@@ -92,7 +110,105 @@ export class SearchComponent implements OnInit {
   }
   addToQueue(index: number) {
     console.log("Adding to queue...");
-    if (this.playlist) {
+    if (this.results[index].type === "spotify") {
+      var song = this.results[index];
+      // Search for song on youtube to get video URL
+      // Use Spotify Album art for thumbnail - result.track.album.images[0].url
+      // Title = Name - result.track.name
+      // Include Artist = result.artists[0].name
+      var query = song.track.artists[0].name + " " + song.track.name;
+      this.db.search("spotify " + query).subscribe(snapshots => {
+        console.log(snapshots.docs);
+        if (snapshots.docs.length == 0) {
+          this.db.youtubeSearch(query, 0).subscribe(
+            response => {
+              this.db.cacheSearch("spotify " + query, response, false);
+              //push first result to queue
+              // response.items[0] => song to add
+              console.log(response);
+              var id = response.items[0].id.videoId;
+              var thumbnail = song.track.album.images[0].url;
+              var title = song.track.name;
+              var artist = song.track.artists[0].name;
+              var url = "https://www.youtube.com/watch?v=" + id;
+              var user = this.auth.user.value;
+              this.db.pushSong(this.uid, {
+                id: id,
+                thumbnail: thumbnail,
+                title: title,
+                artist: artist,
+                url: url
+              });
+              if (this.controller.shuffleMode) {
+                //find rand position
+                var pos =
+                  Math.floor(Math.random() * (this.queue.length - 1)) + 1;
+                this.queue.splice(pos, 0, {
+                  user: user,
+                  id: id,
+                  thumbnail: thumbnail,
+                  artist: artist,
+                  title: title,
+                  url: url
+                });
+              } else {
+                this.queue.push({
+                  user: user,
+                  id: id,
+                  thumbnail: thumbnail,
+                  artist: artist,
+                  title: title,
+                  url: url
+                });
+              }
+              this.snackBar.open(title + " added to queue", "", {
+                duration: 4000
+              });
+              this.db.updateQueue(this.queue);
+            },
+            error => console.log(error)
+          );
+        } else {
+          //push first result to queue
+          var id = snapshots.docs[0].data().id.videoId;
+          var thumbnail = song.track.album.images[0].url;
+          var title = song.track.name;
+          var artist = song.track.artists[0].name;
+          var url = "https://www.youtube.com/watch?v=" + id;
+          var user = this.auth.user.value;
+          this.db.pushSong(this.uid, {
+            id: id,
+            thumbnail: thumbnail,
+            title: title,
+            artist: artist,
+            url: url
+          });
+          if (this.controller.shuffleMode) {
+            //find rand position
+            var pos = Math.floor(Math.random() * (this.queue.length - 1)) + 1;
+            this.queue.splice(pos, 0, {
+              user: user,
+              id: id,
+              thumbnail: thumbnail,
+              artist: artist,
+              title: title,
+              url: url
+            });
+          } else {
+            this.queue.push({
+              user: user,
+              id: id,
+              thumbnail: thumbnail,
+              artist: artist,
+              title: title,
+              url: url
+            });
+          }
+          this.snackBar.open(title + " added to queue", "", { duration: 4000 });
+          this.db.updateQueue(this.queue);
+        }
+      });
+    } else if (this.playlist) {
       this.db.youtubePlaylistItems(this.results[index].id.playlistId).subscribe(
         response => {
           let items = (response as any).items;

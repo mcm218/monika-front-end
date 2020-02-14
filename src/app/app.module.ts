@@ -33,46 +33,58 @@ import { SearchComponent } from "./search/search.component";
 import { environment } from "src/environments/environment";
 import { LoginComponent } from "./login/login.component";
 import { ProfileComponent, DeleteDialog } from "./profile/profile.component";
+import { ListEditorComponent } from './list-editor/list-editor.component';
+import { ListsComponent } from './lists/lists.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    MusicPlayerComponent,
-    SongsComponent,
-    HomeComponent,
-    SearchComponent,
-    LoginComponent,
-    ProfileComponent,
-    DeleteDialog
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    BrowserAnimationsModule,
-    FlexLayoutModule,
-    FontAwesomeModule,
-    MatToolbarModule,
-    MatCardModule,
-    MatButtonModule,
-    MatSliderModule,
-    MatListModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatExpansionModule,
-    MatSnackBarModule,
-    MatTooltipModule,
-    MatDialogModule,
-    DragDropModule,
-    AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFirestoreModule,
-    AngularFireAuthModule,
-    HttpClientModule
-  ],
-  exports: [DeleteDialog],
-  entryComponents: [DeleteDialog],
-  providers: [CookieService],
-  bootstrap: [AppComponent]
+   declarations: [
+      AppComponent,
+      MusicPlayerComponent,
+      SongsComponent,
+      HomeComponent,
+      SearchComponent,
+      LoginComponent,
+      ProfileComponent,
+      DeleteDialog,
+      ListEditorComponent,
+      ListsComponent
+   ],
+   imports: [
+      BrowserModule,
+      AppRoutingModule,
+      FormsModule,
+      BrowserAnimationsModule,
+      FlexLayoutModule,
+      FontAwesomeModule,
+      MatToolbarModule,
+      MatCardModule,
+      MatButtonModule,
+      MatSliderModule,
+      MatListModule,
+      MatFormFieldModule,
+      MatInputModule,
+      MatSelectModule,
+      MatExpansionModule,
+      MatSnackBarModule,
+      MatTooltipModule,
+      MatDialogModule,
+      DragDropModule,
+      AngularFireModule.initializeApp(environment.firebaseConfig),
+      AngularFirestoreModule,
+      AngularFireAuthModule,
+      HttpClientModule
+   ],
+   exports: [
+      DeleteDialog
+   ],
+   entryComponents: [
+      DeleteDialog
+   ],
+   providers: [
+      CookieService
+   ],
+   bootstrap: [
+      AppComponent
+   ]
 })
 export class AppModule {}

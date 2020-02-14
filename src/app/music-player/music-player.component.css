@@ -1,8 +1,9 @@
 .container {
   margin: 16px 0;
 }
-mat-card{
-    border-radius: 20px;
+mat-card {
+  border-radius: 20px;
+  margin: 0 auto;
 }
 mat-card-content {
   text-align: center;

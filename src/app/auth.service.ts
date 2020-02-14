@@ -288,13 +288,13 @@ export class AuthService {
           }
           index = this.prevPath.search(/code/i);
 
-          if (index == -1) {
-            console.log("Navigating to: " + this.prevPath);
-            this.router.navigate([this.prevPath]);
-          } else {
+          // if (index == -1) {
+          //   console.log("Navigating to: " + this.prevPath);
+          //   this.router.navigate([this.prevPath]);
+          // } else {
             console.log("Navigating to: /");
             this.router.navigate([""]);
-          }
+          // }
         },
         error => {
           console.log(error);
@@ -402,6 +402,7 @@ export class AuthService {
                 }
               );
           } else {
+            this.router.navigate(["/login"]);
             console.log(error);
           }
         }

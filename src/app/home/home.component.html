@@ -20,10 +20,10 @@
   />
 </mat-toolbar>
 <div class="home" fxLayout fxLayout.xs="column" fxLayoutAlign="space-between">
-  <div class="panel" fxLayout="column" fxFlex="25%">
+  <div fxLayout="column" fxFlex="32%">
     <app-search></app-search>
   </div>
-  <div fxLayout="column" fxLayoutAlign="start center" fxFlex="10%">
+  <div fxLayout="column" fxLayoutAlign="start center" fxFlex="2%">
     <div fxLayout="row" class="activeUser" *ngFor="let user of users">
       <img
         matTooltip="{{ user.username }}"
@@ -44,11 +44,11 @@
       </div>
     </div>
   </div>
-  <div fxLayout="column" fxFlex="30%">
+  <div fxFlex="30%">
     <app-music-player></app-music-player>
   </div>
-  <div fxLayout="column" fxFlex="10%"></div>
-  <div class="panel" fxLayout="column" fxFlex="25%">
+  <div fxLayout="column" fxFlex="2%"></div>
+  <div fxLayout="column" fxFlex="32%">
     <app-songs></app-songs>
   </div>
 </div>
