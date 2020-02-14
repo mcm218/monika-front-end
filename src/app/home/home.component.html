@@ -2,6 +2,10 @@
   <button mat-button routerLink="/user">
     <fa-icon [icon]="faUser" size="2x"></fa-icon>
   </button>
+  <img
+    height="50px"
+    src="https://cdn.discordapp.com/icons/{{ selected.id }}/{{ selected.icon }}"
+  />
   <mat-form-field>
     <mat-select [(value)]="selected" (selectionChange)="selectGuild()">
       <mat-option *ngFor="let guild of guilds" [value]="guild">
@@ -9,10 +13,6 @@
       </mat-option>
     </mat-select>
   </mat-form-field>
-  <img
-    height="50px"
-    src="https://cdn.discordapp.com/icons/{{ selected.id }}/{{ selected.icon }}"
-  />
   <p class="navUsername">{{ user.username }}</p>
   <img
     height="50px"
@@ -23,7 +23,7 @@
   <div fxLayout="column" fxFlex="32%">
     <app-search></app-search>
   </div>
-  <div fxLayout="column" fxLayoutAlign="start center" fxFlex="2%">
+  <div fxLayout="column" fxLayoutAlign="start center" fxFlex="10%">
     <div fxLayout="row" class="activeUser" *ngFor="let user of users">
       <img
         matTooltip="{{ user.username }}"
@@ -47,8 +47,8 @@
   <div fxFlex="30%">
     <app-music-player></app-music-player>
   </div>
-  <div fxLayout="column" fxFlex="2%"></div>
-  <div fxLayout="column" fxFlex="32%">
+  <div fxLayout="column" fxFlex="10%"></div>
+  <div fxLayout="column" fxFlex="25%">
     <app-songs></app-songs>
   </div>
 </div>

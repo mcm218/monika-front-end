@@ -141,7 +141,9 @@ export class AuthService {
           );
           this.cookieService.set(
             "spotify-refresh-token",
-            response["refresh_token"]
+            response["refresh_token"],
+            undefined,
+            "/"
           );
         },
         error => {
@@ -292,8 +294,8 @@ export class AuthService {
           //   console.log("Navigating to: " + this.prevPath);
           //   this.router.navigate([this.prevPath]);
           // } else {
-            console.log("Navigating to: /");
-            this.router.navigate([""]);
+          console.log("Navigating to: /");
+          this.router.navigate([""]);
           // }
         },
         error => {
