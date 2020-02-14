@@ -3,13 +3,6 @@
     <button mat-button routerLink="">
       <fa-icon [icon]="faHome" size="2x"></fa-icon>
     </button>
-    <mat-form-field>
-      <mat-select [(value)]="selected" (selectionChange)="selectGuild()">
-        <mat-option *ngFor="let guild of guilds" [value]="guild">
-          {{ guild.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
     <img
       class="profile"
       height="50px"
@@ -17,6 +10,14 @@
         selected.icon
       }}"
     />
+    <mat-form-field>
+      <mat-select [(value)]="selected" (selectionChange)="selectGuild()">
+        <mat-option *ngFor="let guild of guilds" [value]="guild">
+          {{ guild.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
     <p class="navUsername">{{ user.username }}</p>
     <img
       class="profile"
@@ -31,11 +32,11 @@
     </a>
   </mat-toolbar>
   <div class="home" fxLayout fxLayout.xs="column" fxLayoutAlign="space-between">
-    <div class="panel" fxFlex="25%">
+    <div class="panel" fxFlex="27.5%">
       <app-list-editor></app-list-editor>
     </div>
-    <div fxFlex="5%"></div>
-    <div fxFlex="70%">
+    <div fxFlex="2.5%"></div>
+    <div fxFlex="65%">
       <app-lists></app-lists>
     </div>
   </div>
